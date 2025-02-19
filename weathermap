@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="website icon" type="png" href="c:\Users\Mukil\Downloads\logo-removebg-preview.png">
+    <title> Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body, html {
+    height: 100%;
+    margin: 0;
+
+    font-family: Arial, sans-serif;
+}
+
+#map {
+    position: fixed;
+    top: 40px;
+    left: 0;
+    height: calc(100% - 50px); /* Adjust height to account for the top offset */
+    width: 100%; /* Full width of viewport */
+    z-index: 0; /* Ensure map is behind other elements */
+    background-repeat: no-repeat; /* Prevent horizontal repetition */
+    background-size: cover; /* Ensure the background covers the entire container */
+}
+
+        #search-container {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1001; /* Above the map */
+           
+            padding: 10px;
+            
+            border-radius: 5px;
+            display: flex;
+            gap: 10px;
+        }
+
+        #search-container button,
+#layer-select {
+    padding: 8px 16px; /* Increase padding for better button appearance */
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #007bff; /* Blue color for the button */
+    color:white; /* White text color */
+    border: none;
+    border-radius: 4px; /* Rounded corners for a modern look */
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+}
+
+#search-container button:hover,
+#layer-select:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+
+
+        .horizontal-gradient-container {
+    background-color:rgba(255, 255, 255, 0.7);
+    position: absolute;
+    bottom: 40px; /* Adjust bottom spacing */
+    right: 10px; /* Adjust right spacing */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1000; /* Ensure it's above the map */
+    border-radius: 15px; /* Adjust the value for roundness */
+    padding: 10px; /* Optional: Add some padding for better appearance */
+}
+
+
+
+        .horizontal-gradient-line {
+            height: 3px; /* Thinner line */
+            width: 260px; /* Adjust width as needed */
+            border-radius: 5px; /* Rounded corners */
+            position: relative;
+            border: 1px solid #ccc; /* Border */
+        }
+
+        .gradient-labels {
+            display: flex;
+            justify-content: space-between;
+            width: 260px; /* Match the width of the gradient line */
+            font-size: 10px; /* Adjust font size as needed */
+            margin-top: 5px; /* Spacing between the gradient and labels */
+        }
+
+        .layer-name {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        nav {
+    position: fixed;
+    top: 1px; 
+    left: 10px; 
+    right: 10px; 
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    border-radius: 15px; 
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1000;
+    border: 2px solid transparent;
+    animation: neon 1.5s infinite alternate;
+    font-size: 12px; 
+}
+.menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+    
+        .menu-item {
+            position: relative;
+            margin: 0 10px;
+        }
+    
+        .menu-item a, .dropdown-menu a, .dropdown-menu button {
+            display: block;
+            color: #007bff;
+            text-align: center;
+            background-color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1em;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 5px;
+            border: 2px solid transparent;
+        }
+    
+        .menu-item a:hover, .dropdown-menu a:hover, .dropdown-menu button:hover {
+            color: white;
+            background-color: #007bff;
+          
+            transform: scale(1.05);
+           
+            border-color: #007bff;
+            border-radius: 25px; /* Rounded corners on hover */
+        }
+    
+        .menu-item a button {
+            all: unset;
+            cursor: pointer;
+        }
+    
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: white;
+            top: 100%;
+            left: 0;
+            min-width: 150px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    
+        .dropdown-menu li {
+            padding: 0;
+            margin: 0;
+        }
+    
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+@keyframes neon {
+    0% {
+        box-shadow: 0 0 10px white, 0 0 20px white, 0 0 30px white, 0 0 40px white, 0 0 50px white;
+        border-color: white;
+    }
+    100% {
+        box-shadow: 0 0 20px #ffffff, 0 0 30px #ffffff, 0 0 40px #ffffff, 0 0 50px #ffffff, 0 0 60px #ffffff;
+        border-color: #ffffff;
+    }
+}
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+/* Navbar styles */
+.navbar {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-start;
+}
+.menu-item {
+    position: relative;
+}
+.dropdown-toggle1 {
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 15px;
+   
+    color: #1976d2;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+}
+.dropdown-toggle1:hover {
+    background-color: #0056b3;
+}
+.dropdown-menu1 {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: calc(100% - 320px); /* Adjust this value as needed */
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+    padding: 10px;
+    min-width: 300px;
+    margin-top: 5px;
+}
+.dropdown-menu1.show {
+    display: block;
+}
+.dropdown-menu1 li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.dropdown-menu1 li:last-child {
+    margin-bottom: 0;
+}
+.dropdown-menu1 label {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #333;
+}
+.select-box {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #fff;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+}
+.select-box:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+.select-box option {
+    padding: 8px;
+}
+.voice-button {
+    padding: 0;
+    background-color: #007bff;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    display: block;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    position: absolute;
+    top: 3px;
+    left: 450px;
+    z-index: 1; /* Adjust this value */
+}
+
+.voice-button:hover {
+    background-color: #0056b3;
+}
+    </style>
+</head>
+<body>
+    <nav>
+        <ul class="menu">
+            <li class="menu-item">
+                <a><button onclick="goBack10()" id="api">CURRENT WEATHER</button></a>
+                
+            </li>
+          
+            <li class="menu-item dropdown">
+                <a href="#" class="dropdown-toggle">FUTURE FORECAST</a>
+                <ul class="dropdown-menu">
+                    <li><a><button onclick="goBack15() " id="hourlyButton">HOURLY</button></a></li>
+                    <li><a><button onclick="goBack19()" id="hourlyButton">DAILY</button></a></li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <a><button onclick="goBack144()" id="api">WEATHER ON MAJOR CITIES</button></a>
+              </li>
+            <li class="menu-item">
+                <a><button onclick="goBack16()" id="api">WEATHER HISTORY</button></a>
+                
+            </li>
+            <li class="menu-item">
+                <a><button onclick="goBack11()" id="api">AIR POLLUTION INDEX</button></a>
+            </li>                                                                                                                                                      
+            <li class="menu-item">
+                <a><button onclick="goBack12()" id="api">MARINE WEATHER REPORT</button></a>
+                
+            </li>
+          
+            
+    
+    </nav>
+    <div id="search-container">
+        <input type="text" id="city-input" placeholder="Enter city name" />
+        <button id="search-button">Search</button>
+      <div id="voice-search" class="voice-button" onclick="startVoiceRecognition('input')">
+            <img src="c:/Users/Mukil/Downloads/pngtree-vector-microphone-icon-png-image_4013734-removebg-preview.png" alt="microphone" style="width: 100%; height: 100%;">
+        </div>
+      
+        <select id="layer-select">
+            <option value="temp_new">Temperature</option>
+            <option value="pressure_new">Pressure</option>
+            <option value="clouds_new">Clouds</option>
+            
+            <option value="precipitation">Global Precipitation</option>
+            <option value="wind_new">Wind Speed</option>
+        </select>
+    </div>
+    <div id="map">
+        
+        <div class="horizontal-gradient-container">
+            <div class="layer-name" id="layer-name">Temperature</div>
+            <div class="horizontal-gradient-line" style="background-image: linear-gradient(to right, rgb(159, 85, 181) 0%, rgb(44, 106, 187) 8.75%, rgb(82, 139, 213) 12.5%, rgb(103, 163, 222) 18.75%, rgb(142, 202, 240) 25%, rgb(155, 213, 244) 31.25%, rgb(172, 225, 253) 37.5%, rgb(194, 234, 255) 43.75%, rgb(255, 255, 208) 50%, rgb(254, 248, 174) 56.25%, rgb(254, 232, 146) 62.5%, rgb(254, 226, 112) 68.75%, rgb(253, 212, 97) 75%, rgb(244, 168, 94) 82.5%, rgb(244, 129, 89) 87.5%, rgb(244, 104, 89) 93.75%, rgb(244, 76, 73) 100%);"></div>
+            <div class="gradient-labels">
+                <div id="label-start">-40</div>
+                <div id="label-start1">-20</div>
+                <div id="label-middle">0</div>
+                <div id="label-middle2">20</div>
+                <div id="label-end">40</div>
+            </div>
+        </div>
+    </div>
+    
+   
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+     document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const encodedCityName = params.get('city');
+            if (encodedCityName) {
+                const cityName = decodeURIComponent(encodedCityName);
+                document.getElementById('city-input').value = cityName;
+                getCityCoordinates(cityName);
+            } else {
+                console.error('City name not found in URL parameters.');
+            }
+        });
+        var map = L.map('map').setView([51.505, -0.09], 5);
+    var baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    var weatherLayer = L.tileLayer(getOWMLayerUrl('temp_new')).addTo(map);
+    var marker;
+    function getOWMLayerUrl(layerType) {
+        return `https://tile.openweathermap.org/map/${layerType}/{z}/{x}/{y}.png?appid=dc598ca12a174f56fd171c2a3d045e3c`;
+    }
+    function getCityCoordinates(city) {
+        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=dc598ca12a174f56fd171c2a3d045e3c`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.cod === 200) {
+                    const { lat, lon } = data.coord;
+                    getWeatherByCoords(lat, lon);
+                } else {
+                    alert('City not found!');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching city coordinates:', error);
+            });
+    }
+    function getWeatherByCoords(lat, lon) {
+        fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=dc598ca12a174f56fd171c2a3d045e3c`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.cod === 200) {
+                    updateWeatherDetails(data);
+                } else {
+                    alert('Location not found!');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching weather data:', error);
+            });
+    }
+    function updateWeatherDetails(data) {
+        document.getElementById('city-input').value = data.name;
+        const tempCelsius = (data.main.temp - 273.15).toFixed(2);
+        const tempFahrenheit = ((data.main.temp - 273.15) * 9 / 5 + 32).toFixed(2);
+        const windDirection = `${data.wind.deg}°`;
+       
+        const weatherDetails = `
+            <b>Weather in ${data.name}</b><br>
+            <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}.png" alt="${data.weather[0].description}">
+            <br>
+            Temperature: ${tempCelsius}°C / ${tempFahrenheit}°F<br>
+            Weather: ${data.weather[0].description}<br>
+            Humidity: ${data.main.humidity}%<br>
+            Pressure: ${data.main.pressure} hPa<br>
+            Wind Speed: ${data.wind.speed} m/s<br>
+            Wind Direction: ${windDirection}<br>
+            `;
+
+        map.setView([data.coord.lat, data.coord.lon], 15);
+        if (marker) {
+            marker.setLatLng([data.coord.lat, data.coord.lon]);
+        } else {
+            marker = L.marker([data.coord.lat, data.coord.lon]).addTo(map);
+        }
+        marker.unbindPopup();
+        marker.bindPopup(weatherDetails, { closeButton: true }).openPopup();
+    }
+    document.getElementById('search-button').addEventListener('click', () => {
+        var city = document.getElementById('city-input').value;
+        getCityCoordinates(city);
+    });
+    document.getElementById('voice-search').addEventListener('click', () => {
+        startVoiceRecognition('city-input');
+    });
+    document.getElementById('layer-select').addEventListener('change', function () {
+        var selectedLayer = this.value;
+        weatherLayer.setUrl(getOWMLayerUrl(selectedLayer));
+        updateGradientForLayer(selectedLayer);
+    });
+    map.on('click', function (e) {
+        var lat = e.latlng.lat;
+        var lon = e.latlng.lng;
+        getWeatherByCoords(lat, lon);
+    });
+    // Initial gradient setup for the default selected layer
+    updateGradientForLayer(document.getElementById('layer-select').value);
+    function startVoiceRecognition(inputId) {
+        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.interimResults = true;
+            recognition.onresult = function(event) {
+                const last = event.results.length - 1;
+                let command = event.results[last][0].transcript.trim();
+                if (command.endsWith(".")) {
+                    command = command.slice(0, -1);
+                }
+                document.getElementById(inputId).value = command;
+                getCityCoordinates(command);
+            };
+            recognition.start();
+        } else {
+            alert('Speech recognition is not supported in your browser. Please use Chrome or Edge.');
+        }
+    }
+    function updateGradientForLayer(layerType) {
+    let gradientColor;
+    let startLabel;
+    let startLabel1; // Added to match your original labels
+    let startLabel2; // Added to match your original labels
+    let middleLabel;
+    let middleLabel1;
+    let middleLabel2;
+    let endLabel;
+    let layerName;
+    switch (layerType) {
+        case 'temp_new':
+            gradientColor = 'linear-gradient(to right, rgb(159, 85, 181) 0%, rgb(44, 106, 187) 8.75%, rgb(82, 139, 213) 12.5%, rgb(103, 163, 222) 18.75%, rgb(142, 202, 240) 25%, rgb(155, 213, 244) 31.25%, rgb(172, 225, 253) 37.5%, rgb(194, 234, 255) 43.75%, rgb(255, 255, 208) 50%, rgb(254, 248, 174) 56.25%, rgb(254, 232, 146) 62.5%, rgb(254, 226, 112) 68.75%, rgb(253, 212, 97) 75%, rgb(244, 168, 94) 82.5%, rgb(244, 129, 89) 87.5%, rgb(244, 104, 89) 93.75%, rgb(244, 76, 73) 100%)';
+            startLabel = '-40';
+            startLabel1 = '-20';
+            middleLabel = '0';
+            middleLabel2 = '20'; // Corrected variable name
+            endLabel = '40';
+            layerName = ' Temperature °C';
+            break;
+            case 'precipitation':
+            gradientColor = 'linear-gradient(to right, rgba(0, 0, 0, 0.09) 0%, rgba(0, 0, 0, 0.12) 8.33333%, rgba(0, 0, 0, 0.16) 16.66667%, rgba(0, 0, 0, 0.2) 25%, rgba(0, 0, 0, 0.23) 33.33333%, rgba(0, 0, 0, 0.26) 41.66667%, rgba(0, 0, 0, 0.29) 50%, rgba(0, 0, 0, 0.35) 58.33333%, rgba(0, 0, 0, 0.42) 66.66667%, rgba(0, 0, 0, 0.5) 75%, rgba(0, 0, 0, 0.63) 83.33333%, rgba(0, 0, 0, 0.71) 91.66667%, rgba(0, 0, 0, 0.8) 100%)';
+            startLabel = '0';
+            startLabel1 = '6';
+            middleLabel = '12';
+            middleLabel2 = '24'; // Corrected variable name
+            endLabel = '60';
+            layerName = 'Rainfall mm/h';
+            break;
+        case 'pressure_new':
+            gradientColor = 'linear-gradient(to right, rgb(0, 115, 255) 0%, rgb(0, 170, 255) 8.35059%, rgb(75, 208, 214) 24.9192%, rgb(141, 231, 199) 41.4879%, rgb(176, 247, 32) 49.7722%, rgb(240, 184, 0) 58.0565%, rgb(251, 85, 21) 74.6251%, rgb(243, 54, 59) 91.1938%, rgb(198, 0, 0) 100%)';
+            startLabel = '950';
+            startLabel1 = '980';
+            middleLabel = '1010';
+            middleLabel2 = '1040'; // Corrected variable name
+            endLabel = '1070';
+            layerName = 'Pressure hPa';
+            break;
+        case 'clouds_new':
+            gradientColor = 'linear-gradient(to right, rgba(82, 82, 82, 0.03) 0%, rgba(82, 82, 82, 0.11) 10%, rgba(82, 82, 82, 0.16) 20%, rgba(82, 82, 82, 0.22) 30%, rgba(82, 82, 82, 0.27) 40%, rgba(82, 82, 82, 0.38) 50%, rgba(82, 82, 82, 0.45) 60%, rgba(82, 82, 82, 0.52) 70%, rgba(82, 82, 82, 0.64) 80%, rgba(82, 82, 82, 0.74) 90%, rgba(82, 82, 82, 0.83) 100%)';
+            startLabel = '0';
+            startLabel1 = '25';
+            middleLabel = '50';
+            middleLabel2 = '75'; // Corrected variable name
+            endLabel = '100';
+            layerName = 'Cloudiness %';
+            break;
+       
+        case 'wind_new':
+            gradientColor = 'linear-gradient(to left, rgb(158, 128, 177), rgba(116, 76, 172, 0.9), rgb(164, 123, 170), rgba(170, 128, 177, 0.84), rgba(176, 128, 177, 0.71), rgba(170, 128, 177, 0.54), rgba(170, 128, 177, 0.44), rgba(255, 255, 0, 0))';
+            startLabel = '0';
+            startLabel1 = '25';
+            middleLabel = '50';
+            middleLabel2 = '75'; // Corrected variable name
+            endLabel = '100';
+            layerName = 'Wind Speed m/s';
+            break;
+        default:
+            gradientColor = '';
+            startLabel = '';
+            startLabel1 = ''; // Added to match your original labels
+            middleLabel = '';
+            endLabel = '';
+            layerName = '';
+    }
+    document.querySelector('.horizontal-gradient-line').style.backgroundImage = gradientColor;
+    document.getElementById('label-start').innerText = startLabel;
+    document.getElementById('label-start1').innerText = startLabel1; // Updated from startLabel1 to match your variable names
+    document.getElementById('label-middle2').innerText = middleLabel2; // Updated from startLabel2 to middleLabel2 to match your variable names
+    document.getElementById('label-middle').innerText = middleLabel;
+    document.getElementById('label-end').innerText = endLabel;
+    document.getElementById('layer-name').innerText = layerName;
+}
+
+            document.getElementById('search-button').addEventListener('click', () => {
+                var city = document.getElementById('city-input').value;
+                getWeatherByCity(city);
+            });
+            document.getElementById('layer-select').addEventListener('change', function() {
+                var selectedLayer = this.value;
+                weatherLayer.setUrl(getOWMLayerUrl(selectedLayer));
+                updateGradientForLayer(selectedLayer);
+            });
+            map.on('click', function(e) {
+                var lat = e.latlng.lat;
+                var lon = e.latlng.lng;
+                getWeatherByCoords(lat, lon);
+            });
+            // Initial gradient setup for the default selected layer
+            updateGradientForLayer(document.getElementById('layer-select').value);
+          
+            function goBack10() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'weather dashboard.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+     function goBack11() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'air.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+             function goBack12() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'marine.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+             function goBack15() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'HOURLY.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack16() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'pastweather.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack19() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'Daily.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack144() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'major.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+
+    </script>
+</body>
+</html>
