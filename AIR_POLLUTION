@@ -1,0 +1,1836 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIR POLLUTION INDEX</title>
+    <link rel="website icon" type="png" href="c:\Users\Mukil\Downloads\logo-removebg-preview.png">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+          
+        }
+        nav {
+    position: fixed;
+    top: 1px; 
+    left: 10px; 
+    right: 10px; 
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    border-radius: 15px; 
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1000;
+    border: 2px solid transparent;
+    animation: neon 1.5s infinite alternate;
+    font-size: 12px; 
+}
+.menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+    
+        .menu-item {
+            position: relative;
+            margin: 0 10px;
+        }
+    
+        .menu-item a, .dropdown-menu a, .dropdown-menu button {
+            display: block;
+            color: #007bff;
+            text-align: center;
+            background-color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1em;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 5px;
+            border: 2px solid transparent;
+        }
+    
+        .menu-item a:hover, .dropdown-menu a:hover, .dropdown-menu button:hover {
+            color: white;
+            background-color: #007bff;
+          
+            transform: scale(1.05);
+           
+            border-color: #007bff;
+            border-radius: 25px; /* Rounded corners on hover */
+        }
+    
+        .menu-item a button {
+            all: unset;
+            cursor: pointer;
+        }
+    
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: white;
+            top: 100%;
+            left: 0;
+            min-width: 150px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    
+        .dropdown-menu li {
+            padding: 0;
+            margin: 0;
+        }
+    
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+@keyframes neon {
+    0% {
+        box-shadow: 0 0 10px white, 0 0 20px white, 0 0 30px white, 0 0 40px white, 0 0 50px white;
+        border-color: white;
+    }
+    100% {
+        box-shadow: 0 0 20px #ffffff, 0 0 30px #ffffff, 0 0 40px #ffffff, 0 0 50px #ffffff, 0 0 60px #ffffff;
+        border-color: #ffffff;
+    }
+}
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+/* Navbar styles */
+.navbar {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-start;
+}
+.menu-item {
+    position: relative;
+}
+.dropdown-toggle1 {
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 15px;
+   
+    color: #1976d2;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+}
+.dropdown-toggle1:hover {
+    background-color: #0056b3;
+}
+.dropdown-menu1 {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: calc(100% - 320px); /* Adjust this value as needed */
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+    padding: 10px;
+    min-width: 300px;
+    margin-top: 5px;
+}
+.dropdown-menu1.show {
+    display: block;
+}
+.dropdown-menu1 li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.dropdown-menu1 li:last-child {
+    margin-bottom: 0;
+}
+.dropdown-menu1 label {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #333;
+}
+.select-box {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #fff;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+}
+.select-box:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+.select-box option {
+    padding: 8px;
+}
+/* Switch toggle styles */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 28px;
+    vertical-align: middle;
+}
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color:red;
+    transition: .4s;
+    border-radius: 28px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider {
+    background-color: #4CAF50;
+}
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+.slider.round {
+    border-radius: 28px;
+}
+.input-box {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 10px;
+}
+.button {
+    cursor: pointer;
+    font-size: 14px;
+    padding: 8px 12px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+}
+.button:hover {
+    background-color: #218838;
+}
+.button.subscribed {
+    background-color: #dc3545;
+}
+.button.subscribed:hover {
+    background-color: #c82333;
+}
+        .button {
+            cursor: pointer;
+            font-size: 14px;
+            padding: 8px 12px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+        .button:hover {
+            background-color: #218838;
+        }
+        .button.subscribed {
+            background-color: #dc3545;
+        }
+        .button.subscribed:hover {
+            background-color: #c82333;
+        }
+        .search-bar {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 80px;
+            z-index: 0;
+        }
+        .search-bar input {
+            padding: 10px;
+            width: 340px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .search-bar button {
+            padding: 10px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .search-bar button:hover {
+            background-color: #0056b3;
+        }
+        .air-pollution-container {
+        background-color: rgba(255, 255, 255, 0.5);
+      
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 300px;
+        margin: auto;
+        padding: 10px;
+        margin-top: 20px;
+    }
+
+    .air-pollution-container h2 {
+        font-size: 24px;
+        text-align: center;
+        margin-bottom: 20px;
+        color: #343a40; /* Dark text color */
+    }
+
+    .air-pollution-stats {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    .air-pollution-stats div {
+        margin-bottom: 10px;
+    }
+
+    .air-pollution-stats span {
+        font-weight: bold;
+        margin-left: 10px;
+    }
+
+    .error-message {
+        color: #dc3545;
+        font-size: 14px;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    @media only screen and (max-width: 600px) {
+        table {
+            font-size: 0.9em;
+        }
+
+        th, td {
+            padding: 10px;
+        }
+    }
+.error-message {
+    color: #dc3545;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 10px;
+}
+table {
+        max-width: 800px; /* Adjusted maximum width for the table */
+        margin: 20px auto; /* Centering the table */
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #ccc;
+    }
+
+    th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+        color: #333;
+        text-align: center;
+    }
+
+    .good { background-color: #b7e1cd; }
+    .fair { background-color: #f5d183; }
+    .moderate { background-color: #f5a95d; }
+    .poor { background-color: #e87f73; }
+    .very-poor { background-color: #d64f49; }
+
+    .table-header {
+        background-color: #4CAF50;
+        color: white;
+        padding: 12px;
+        text-align: center;
+    }
+
+    .table-content th {
+        text-align: left;
+    }
+
+    h2 {
+        color:white;
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+    }
+
+    /* Hover effect for table rows */
+    tr:hover {
+        background-color: #f2f2f2; /* Light gray background on hover */
+    }
+
+    @media only screen and (max-width: 600px) {
+        table {
+            font-size: 0.9em;
+        }
+
+        th, td {
+            padding: 10px;
+        }
+    }
+    .nav-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+}
+.nav-button:hover {
+    background-color: #0056b3;
+}
+.nav-container {
+    text-align: left;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.round {
+    border-radius: 50%;
+    display: inline-block;
+    padding: 8px 16px;
+    margin: 0 10px;
+    text-decoration: none;
+    font-size: 24px;
+}
+.previous {
+    background-color: #007bff;
+    color: white;
+}
+.next {
+    background-color: #007bff;
+    color: white;
+}
+.container34 {
+            position: absolute;
+            top: 70px;
+            right: -300px; /* Completely hidden off-screen */
+            width: 250px;
+            max-height: 500px;
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            transition: right 0.4s ease-in-out;
+        }
+
+        .container34 h4 {
+            text-align: center;
+            margin: 0 0 15px 0;
+            font-size: 18px;
+            color: darkblue;
+        }
+
+        .info ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .info li {
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: darkblue;
+        }
+
+        .slider-button1 {
+            position: absolute;
+            top: 60px; /* Adjusted to be higher above the container */
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: #007bff; /* Blue color */
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: block;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .slider-button1:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+        .container {
+    max-width: 400px;
+    color: white; /* Text color set to white */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 70px; /* Adjust distance from the top of the viewport */
+    left: 20px; /* Adjust distance from the left of the viewport */
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+    transition: background-image 0.3s ease;
+}
+.container * {
+    color: white; /* Ensure all text inside .container inherits white color */
+}
+#airPollutionData {
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #ccc;
+    text-align: left; /* Align pollution data to the left */
+}
+#location {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+#error {
+    color: red;
+    margin-top: 10px;
+}
+.nav-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+}
+.nav-button:hover {
+    background-color: #0056b3;
+}
+.nav-container {
+    text-align: left;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.round {
+    border-radius: 50%;
+    display: inline-block;
+    padding: 8px 16px;
+    margin: 0 10px;
+    text-decoration: none;
+    font-size: 24px;
+}
+.previous {
+    background-color: #007bff;
+    color: white;
+}
+.next {
+    background-color: #007bff;
+    color: white;
+}
+.container1 {
+            position: absolute;
+            color:black;
+            top: 450px;
+            left: 20px;
+            width: 270px;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background-color:rgba(255, 255, 255, 0.5);;
+        }
+        .chart-container {
+            width: 100%;
+            max-width: 260px;
+            margin: 20px auto;
+        }
+        .popup-message {
+    position: absolute;
+    top: 80px;
+   position:fixed;
+    left: 400px;
+    width: 50%;
+    background-color: #f44336; /* Default background color */
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    display: none; /* Initially hidden */
+  }
+  .popup-message.green {
+    background-color:green; /* Green background for good air quality */
+  }
+  .popup-message.yellow {
+    background-color:#FFC300; /* Yellow background for good air quality */
+  }
+  .popup-message.darkyellow{
+    background-color:#8B8000
+; /* Yellow background for good air quality */
+  }
+  .popup-message.lred {
+    background-color:#FF7074; /* Yellow background for good air quality */
+  }
+  .popup-message.dred{
+    background-color: #e23f44;
+  }
+  .close-button {
+    position: absolute;
+    top: 0;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .close-button:hover {
+    color: black;
+  }
+  .container24 {
+        position: fixed;
+        top: 60px; /* Adjust as needed */
+        left: -320px; /* Start off the screen to the left */
+        width: 250px; 
+            max-height: 500px; 
+            background-color:rgba(255, 255, 255, 0.8); 
+           
+            padding: 15px;
+    
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: left; /* Align text to the left for better readability */
+        transition: left 0.3s ease; /* Smooth sliding animation */
+        overflow-y: auto; /* Enable vertical scrolling */
+    }
+
+    h1 {
+        font-size: 1.8em;
+        color:darkblue;
+        margin-bottom: 20px;
+        text-align: center; /* Center align the heading */
+    }
+
+    h2 {
+        font-size: 1.5em;
+        color: darkblue;
+        margin-bottom: 10px;
+    }
+
+    .pollutant {
+        margin-bottom: 30px; /* Increased margin between pollutants for better separation */
+    }
+
+    .pollutant p {
+        color: darkblue;
+        line-height: 1.6;
+    }
+
+    /* Slider button styles */
+    .slider-button {
+        position: fixed;
+        top: 20px; /* Adjust as needed */
+        left: 20px; /* Adjust as needed */
+        width: 40px; /* Adjust width as needed */
+        height: 40px; /* Adjust height as needed */
+        background-color: blue;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        text-align: center;
+        line-height: 40px;
+        font-size: 1.2em;
+        z-index: 1000; /* Ensure button is above container */
+    }
+
+    /* Page down button styles */
+    .page-down-button {
+        position: fixed;
+        bottom: 20px; /* Adjust as needed */
+        right: 20px; /* Adjust as needed */
+        width: 40px; /* Adjust width as needed */
+        height: 40px; /* Adjust height as needed */
+        background-color: #333;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        text-align: center;
+        line-height: 40px;
+        font-size: 1.2em;
+        z-index: 1000; /* Ensure button is above container */
+    }
+    
+    .voice-button {
+    padding: 0;
+    background-color: #007bff;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    display: block;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    position: absolute;
+    top: 73px;
+    left: 955px;
+    z-index: 1; /* Adjust this value */
+}
+
+.voice-button:hover {
+    background-color: #0056b3;
+}
+#windy-map-container {
+      position: absolute;
+      top: 138px; /* Adjust top position as needed */
+      right: 1px;
+      width: 565px;
+      height: 500px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #windy-map {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+   
+        #mute-toggle {
+    background-color: #007bff; /* Bootstrap blue color */
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex; /* Hide the button */
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s;
+    position: relative;
+   
+  left: 100px;;/* Adjust this value to position it left or right */
+    z-index: 1000; /* Ensure it's on top of other elements */
+}
+
+
+
+
+#mute-toggle:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+#mute-img {
+    width: 70%;
+    height: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+    </style>
+</head>
+<body>
+    <center>
+    <div class="popup-message" id="popupMessage">
+        <span class="close-button" onclick="closePopup()">×</span>
+        <p id="popup"></p>
+      </div>
+    </center>
+ 
+    <nav>
+        <ul class="menu">
+            <li class="menu-item">
+                <a><button onclick="goBack()" id="api">CURRENT WEATHER</button></a>
+            </li>
+            <li class="menu-item">
+                <a>
+                    <button onclick="goBack15()">WEATHER MAP </button>
+                </a>
+            </li>
+            <li class="menu-item dropdown">
+                <a href="#" class="dropdown-toggle">FUTURE FORECAST</a>
+                <ul class="dropdown-menu">
+                    <li><a><button onclick="goBack1()" id="hourlyButton">HOURLY</button></a></li>
+                   
+                    <li><a><button onclick="goBack19()" id="hourlyButton">DAILY</button></a></li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <a><button onclick="goBack144()" id="api">WEATHER ON MAJOR CITIES</button></a>
+              </li>
+            <li class="menu-item">
+                <a><button onclick="goBack14()" id="api">WEATHER HISTORY</button></a>
+                
+            </li>
+            <li class="menu-item">
+                <a><button onclick="goBack12()" id="api">MARINE WEATHER REPORT</button></a>
+            </li>
+           
+        </ul>
+        
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <div class="search-bar">
+        <input type="text" id="cityName" placeholder="Enter city name" class="input-box">
+        <button onclick="fetchCityFromSearch()" class="button" id="searchButton">Search</button>
+        
+    
+        <div id="voiceSearchButtonPopup" class="voice-button" onclick="startVoiceRecognition('input')">
+            <img src="c:/Users/Mukil/Downloads/pngtree-vector-microphone-icon-png-image_4013734-removebg-preview.png" alt="microphone" style="width: 100%; height: 100%;">
+        </div>
+        <div id="message-container"></div>
+        <button id="mute-toggle">
+            <img id="mute-img" src="C:\Users\Mukil\Downloads\360_F_187902352_T0A6TDGN9m68hdBXs9eUo6L72Y1BhYz1-removebg-preview1.png" alt="Speaker">
+        </button>
+    </div>
+    </div>
+    <div id="windy-map-container">
+        <iframe id="windy-map" 
+            src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=5&overlay=cosc&product=cams&level=surface&lat=25.707&lon=85.154&message=true" 
+            frameborder="0">
+        </iframe>
+      </div>
+    <div class="info">
+    
+    </div>
+    <button class="slider-button1" onclick="toggleSlider1()">≡</button>
+    <div class="container34" id="aqiContainer1">
+        <h4>DEFINITIONS</h4>
+        <div class="info">
+            <ul>
+                <li><b>PM2.5 (Particulate Matter 2.5):</b> Fine particles smaller than 2.5 micrometers, produced mainly from combustion processes such as vehicle engines, industrial activities, and natural sources like wildfires and dust storms.</li>
+                <li><b>PM10 (Particulate Matter 10):</b> Coarser particles smaller than 10 micrometers, generated from similar sources as PM2.5, including combustion of fossil fuels, construction activities, and agricultural practices.</li>
+                <li><b>O3 (Ozone):</b> Ground-level ozone is formed when pollutants like nitrogen oxides (NOx) and volatile organic compounds (VOCs) from vehicle exhaust, industrial emissions, and chemical solvents react in the presence of sunlight.</li>
+                <li><b>NO2 (Nitrogen Dioxide):</b> A reddish-brown gas primarily emitted from vehicle exhaust, industrial processes like power generation and metal smelting, and residential heating using fossil fuels.</li>
+                <li><b>SO2 (Sulfur Dioxide):</b> A gas with a strong odor produced by burning fossil fuels containing sulfur, such as coal and oil, in industrial processes and power plants. It is also emitted by volcanic eruptions.</li>
+                <li><b>CO (Carbon Monoxide):</b> A colorless, odorless gas released from incomplete combustion of carbon-containing fuels like gasoline, natural gas, and wood. Sources include vehicle engines, industrial processes, and residential heating systems.</li>
+                <li><b>AIR QUALITY INDEX (AQI):</b> A composite index reflecting the concentration of pollutants such as PM2.5, PM10, O3, NO2, SO2, and CO. It provides a simplified way to understand air quality conditions based on these pollutants.</li>
+                <li><b>AIR QUALITY CONDITION:</b> Categories (e.g., Very Poor, Good) based on the AQI, indicating the current health implications associated with the concentration of pollutants in the air.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="air-pollution-container">
+        <h2>Air Quality Index Analysis</h2>
+        <h2 id="location1"></h2>
+        
+        <div id="airPollutionData1" class="air-pollution-stats"></div>
+        
+        <div id="error" class="error-message"></div>
+    </div>
+    <div class="container" id="container">
+        <h2 id="location">Air Pollution Data for Major Cities</h2>
+        <div id="airPollutionData"></div>
+        <div id="error"></div>
+        
+       
+        <a href="#" class="previous round nav-button" onclick="previousCity()">&#8249;</a>
+        <a href="#" class="next round nav-button" onclick="nextCity()">&#8250;</a>
+    </div>
+    <div class="container1">
+        <h1>Current Air Pollution Data</h1>
+        <div id="error" style="color: red;"></div>
+        <div id="location1"></div>
+        <div id="airPollutionData1"></div>
+        <div class="chart-container">
+            <canvas id="myPieChart"></canvas>
+        </div>
+    </div>
+    <h2 style="color: white;">Air Quality Index Table</h2>
+    <table>
+        <tr class="table-header">
+            <th class="table-content">Qualitative Name</th>
+            <th>Index</th>
+            <th>SO2 (μg/m³)</th>
+            <th>NO2 (μg/m³)</th>
+            <th>PM10 (μg/m³)</th>
+            <th>PM2.5 (μg/m³)</th>
+            <th>O3 (μg/m³)</th>
+            <th>CO (μg/m³)</th>
+        </tr>
+        <tr class="good">
+            <td class="table-content">Good</td>
+            <td>1</td>
+            <td>[0; 20)</td>
+            <td>[0; 40)</td>
+            <td>[0; 20)</td>
+            <td>[0; 10)</td>
+            <td>[0; 60)</td>
+            <td>[0; 4400)</td>
+        </tr>
+        <tr class="fair">
+            <td class="table-content">Fair</td>
+            <td>2</td>
+            <td>[20; 80)</td>
+            <td>[40; 70)</td>
+            <td>[20; 50)</td>
+            <td>[10; 25)</td>
+            <td>[60; 100)</td>
+            <td>[4400; 9400)</td>
+        </tr>
+        <tr class="moderate">
+            <td class="table-content">Moderate</td>
+            <td>3</td>
+            <td>[80; 250)</td>
+            <td>[70; 150)</td>
+            <td>[50; 100)</td>
+            <td>[25; 50)</td>
+            <td>[100; 140)</td>
+            <td>[9400; 12400)</td>
+        </tr>
+        <tr class="poor">
+            <td class="table-content">Poor</td>
+            <td>4</td>
+            <td>[250; 350)</td>
+            <td>[150; 200)</td>
+            <td>[100; 200)</td>
+            <td>[50; 75)</td>
+            <td>[140; 180)</td>
+            <td>[12400; 15400)</td>
+        </tr>
+        <tr class="very-poor">
+            <td class="table-content">Very Poor</td>
+            <td>5</td>
+            <td>≥350</td>
+            <td>≥200</td>
+            <td>≥200</td>
+            <td>≥75</td>
+            <td>≥180</td>
+            <td>≥15400</td>
+        </tr>
+    </table>
+    <div class="container24" id="aqiContainer">
+        <h1>Air Quality Information</h1>
+        <div class="pollutant">
+            <h2>PM2.5 (Particulate Matter 2.5)</h2>
+            <p>Inhalation of fine particles (<2.5 micrometers) can lead to respiratory irritation and aggravation of asthma. Typical exposure levels range from 0 to 50 µg/m³ for good air quality.</p>
+        </div>
+        <div class="pollutant">
+            <h2>PM10 (Particulate Matter 10)</h2>
+            <p>Coarser particles (<10 micrometers) can cause respiratory symptoms such as coughing and aggravate existing lung conditions. Exposure levels typically range from 0 to 50 µg/m³ under good air quality conditions.</p>
+        </div>
+        <div class="pollutant">
+            <h2>O3 (Ozone)</h2>
+            <p>Ground-level ozone irritates the respiratory system, exacerbates asthma, and can cause lung damage. Harmful levels start above 100 µg/m³ (micrograms per cubic meter).</p>
+        </div>
+        <div class="pollutant">
+            <h2>NO2 (Nitrogen Dioxide)</h2>
+            <p>Inhalation of NO2 can lead to respiratory symptoms such as coughing and reduced lung function. Harmful levels start above 100 µg/m³ (micrograms per cubic meter).</p>
+        </div>
+        <div class="pollutant">
+            <h2>SO2 (Sulfur Dioxide)</h2>
+            <p>SO2 exposure can irritate the respiratory system and exacerbate asthma. Harmful levels start above 100 µg/m³ (micrograms per cubic meter).</p>
+        </div>
+        <div class="pollutant">
+            <h2>CO (Carbon Monoxide)</h2>
+            <p>Inhalation of CO reduces oxygen delivery in the body, leading to headaches, dizziness, and potentially fatal levels above 35,000 µg/m³ over one hour (micrograms per cubic meter).</p>
+        </div>
+    </div>
+  
+
+    
+    <!-- Slider button -->
+    <button class="slider-button" onclick="toggleSlider()">≡</button>
+      
+    <script>
+        const apiKey = "36b3e04a424745f6b12a3bcf00e54769";
+        const openWeatherAPIKey = '36b3e04a424745f6b12a3bcf00e54769';
+        let myPieChart;
+        document.addEventListener('DOMContentLoaded', (event) => {
+    const params = new URLSearchParams(window.location.search);
+    const encodedCityName = params.get('city');
+    
+    if (encodedCityName) {
+        const cityName = decodeURIComponent(encodedCityName);
+        fetchAirPollutionData1(cityName);
+        fetchAirPollutionData32(cityName);
+        fetchWeatherAndMap(cityName)
+        speakMessage()
+         // Assuming fetchAirPollutionData1 is defined elsewhere
+    } else {
+        console.error('City name not found in URL parameters.');
+    }
+});
+
+function goBack() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'weather dashboard.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        
+function goBack1() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'HOURLY.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack14() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'pastweather.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack12() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'marine.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack15() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'map.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack19() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'Daily.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack144() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'major.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+       // Function to show the popup message and hide the microphone button
+function showPopup() {
+    var popup = document.getElementById("popupMessage");
+    popup.style.display = "block";
+    
+    var voiceButton = document.getElementById("voiceSearchButtonPopup");
+    var sound=document.getElementById("mute-toggle")
+    sound.style.display="none"
+    voiceButton.style.display = "none"; // Hide the voice button
+}
+
+// Function to close the popup message and show the microphone button
+function closePopup() {
+    var popup = document.getElementById("popupMessage");
+    popup.style.display = "none";
+    
+    var voiceButton = document.getElementById("voiceSearchButtonPopup");
+    voiceButton.style.display = "block"; // Show the voice button
+    var sound=document.getElementById("mute-toggle")
+    sound.style.display="block"
+}
+
+       
+        const time = new Date().getHours();
+let backgroundImage;
+if (time >= 6 && time < 16) {
+    backgroundImage = 'url("c:/Users/Mukil/Downloads/noon sky (2) (2).jpg")';
+} else if (time >= 16 && time < 19) {
+    backgroundImage = 'url("c:/Users/Mukil/Downloads/depositphotos_582319764-stock-photo-summer-evening-stormy-sky (1).jpg")';
+} else {
+    backgroundImage = 'url("c:/Users/Mukil/Downloads/pexels-pixabay-414727 (1).jpg")';
+}
+document.body.style.backgroundImage = backgroundImage;
+
+function fetchCityFromSearch() {
+    const cityInput = document.getElementById('cityName');
+    const cityName = cityInput.value.trim();
+    if (cityName) {
+        fetchAirPollutionData1(cityName);
+    } else {
+        alert('Please enter a city name.');
+    }
+}
+function startVoiceRecognition(inputId) {
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.interimResults = true;
+        recognition.onresult = function(event) {
+            const last = event.results.length - 1;
+            let command = event.results[last][0].transcript.trim();
+            if (command.endsWith(".")) {
+                command = command.slice(0, -1);
+            }
+            document.getElementById('cityName').value = command;
+           fetchAirPollutionData1(command);
+           fetchAirPollutionData32(command);
+           fetchWeatherAndMap(command)
+          
+          
+           
+        };
+        recognition.start();
+    } else {
+        alert('Speech recognition is not supported in your browser. Please use Chrome or Edge.');
+    }
+}
+
+
+function fetchCityFromSearch() {
+    const cityName = document.getElementById('cityName').value;
+    fetchAirPollutionData1(cityName);
+    fetchAirPollutionData32(cityName)
+    fetchWeatherAndMap(cityName)
+}
+
+const majorCities = [
+            "Tokyo", "New York City", "São Paulo", "Seoul", "Mexico City",
+            "Jakarta", "Osaka", "Manila", "Mumbai", "Delhi",
+            "Shanghai", "Los Angeles", "Cairo", "Beijing", "Dhaka",
+            "Karachi", "Buenos Aires", "Istanbul", "Rio de Janeiro", "Moscow",
+            "Lagos", "Kinshasa", "Tianjin", "Lima", "London",
+            "Bangkok", "Hyderabad", "Bangalore", "Ho Chi Minh City", "Baghdad",
+            "Santiago", "Riyadh", "Singapore", "Toronto", "Kolkata",
+            "Nairobi", "Chicago", "Washington, D.C.", "Dubai", "Sydney",
+            "Hong Kong", "Cape Town", "Berlin", "Vienna", "Paris",
+            "Madrid", "Rome", "Amsterdam", "Stockholm"
+        ];
+        let currentCityIndex = 0;
+        let timerId;
+        // Function to fetch air pollution data for the current city index
+        function fetchAirPollutionData() {
+            const cityName = majorCities[currentCityIndex];
+            const locationElement = document.getElementById('location');
+            const airPollutionDataContainer = document.getElementById('airPollutionData');
+            const errorContainer = document.getElementById('error');
+            const container = document.getElementById('container');
+            // Show loading indicator
+            airPollutionDataContainer.innerHTML = '<p>Loading...</p>';
+            errorContainer.textContent = '';
+            fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}`)
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 404) {
+                            throw new Error(`City not found: ${cityName}`);
+                        } else {
+                            throw new Error(`Error fetching weather data: ${response.statusText}`);
+                        }
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const lat = data.coord.lat;
+                    const lon = data.coord.lon;
+                    const locationName = data.name;
+                    locationElement.textContent = `Air Pollution Data for ${locationName}`;
+                  
+                    let imageUrl = '';
+                    switch (cityName) {
+                        case 'Tokyo':
+                            imageUrl = 'c:/Users/Mukil/Downloads/istockphoto-1390815938-612x612.jpg';
+                            break;
+                        case 'New York City':
+                            imageUrl = 'c:/Users/Mukil/Downloads/Statue-of-Liberty-Island-New-York-Bay.webp';
+                            break;
+                            case 'São Paulo':
+                            imageUrl = 'c:/Users/Mukil/Downloads/sao-paulo-octavio-frias-de-oliveira-bridge-brazil-latin-america-153080222.jpg';
+                            break;
+                            case 'Seoul':
+                            imageUrl = 'c:/Users/Mukil/Downloads/Seoul_(175734251).jpeg';
+                            break;
+                            case 'Mexico City':
+                            imageUrl = 'c:/Users/Mukil/Downloads/112092_SCN_MexicoCity_iStock628540524_Z42920.webp';
+                            break;
+                            case 'Jakarta':
+                            imageUrl = 'c:/Users/Mukil/Downloads/ad879e55-city-22380-17ea1cf2107.jpg';
+                            break;
+                            case 'Osaka':
+                            imageUrl = 'c:/Users/Mukil/Downloads/Osaka_Districts-XL.jpg';
+                            break;
+                            case 'Manila':
+                            imageUrl = 'c:/Users/Mukil/Downloads/Makati_City_Lights2_(Jopet_Sy)_-_Flickr.jpg';
+                            break;
+                            case 'Mumbai':
+                            imageUrl = 'c:/Users/Mukil/Downloads/9067kji_mumbai-getty_625x300_24_June_24.webp';
+                            break;
+                            case 'Delhi':
+                            imageUrl = 'c:/Users/Mukil/Downloads/DELHI.webp';
+                            break;
+                            case 'Shanghai':
+                            imageUrl = 'c:/Users/Mukil/Downloads/shanghai-fi.webp';
+                            break;
+                            case 'Los Angeles':
+                            imageUrl = 'c:/Users/Mukil/Downloads/image.jpg';
+                            break;
+                            case 'Cairo':
+                            imageUrl = 'c:/Users/Mukil/Downloads/Cairo_From_Tower_(cropped).jpg';
+                            break;
+                            case 'Beijing':
+                            imageUrl = 'c:/Users/Mukil/Downloads/22c46ab3-city-3286-164700d5d0b.jpg';
+                            break;
+                            case 'Dhaka':
+                            imageUrl = 'c:/Users/Mukil/Downloads/main-qimg-af7bd47e7c949854c66541ccb7852eb6-lq.jpg';
+                            break;
+                            case 'Karachi':
+                            imageUrl = 'c:/Users/Mukil/Downloads/Karachi-Pakistan.webp';
+                            break;
+                            case 'Buenos Aires':
+                            imageUrl = 'c:/Users/Mukil/Downloads/1-Von-Deensel_Puerto_Madero_Buenos_Aires_40689219792-min-2.jpg';
+                            break;
+                            case 'Istanbul':
+                            imageUrl = 'c:/Users/Mukil/Downloads/Historical_peninsula_and_modern_skyline_of_Istanbul.jpg';
+                            break;  
+                            case 'Rio de Janeiro':
+                            imageUrl = 'c:/Users/Mukil/Downloads/image (1).jpg';
+                            break;
+                            case 'Moscow':
+                            imageUrl = 'c:/Users/Mukil/Downloads/image (2).jpg';
+                            break;
+                            case 'Lagos':
+                            imageUrl = 'c:/Users/Mukil/Downloads/2014_Victoria_Island_Lagos_Nigeria_15006436297.jpg';
+                            break;
+                            case 'Kinshasa':
+                            imageUrl = 'c:/Users/Mukil/Downloads/La_ville_de_Kinshasa.jpg';
+                            break;
+                            case 'Tianjin':
+                            imageUrl = 'c:/Users/Mukil/Downloads/downtown-tianjin-at-night-879130764-c9e4506f1b6241b7aa41fbdc74c16637.jpg';
+                            break;
+                            case 'Lima':
+                            imageUrl = 'c:/Users/Mukil/Downloads/Lima-City-1024x767.jpeg';
+                            break;
+                            case 'London':
+                            imageUrl = 'c:/Users/Mukil/Downloads/London_Skyline_(125508655).jpeg';
+                            break;
+                            case 'Bangkok':
+                            imageUrl = 'c:/Users/Mukil/Downloads/Rattanakosin-is-the-royal-area-of-Bangkok.webp';
+                            break;
+                            case 'Hyderabad':
+                            imageUrl = 'c:/Users/Mukil/Downloads/d71f2b55-city-7297-16494c3d70c.jpg';
+                            break;
+                            case 'Bangalore':
+                            imageUrl = 'c:/Users/Mukil/Downloads/Cover (1)-1690261803767.jpg';
+                            break;
+                            case 'Ho Chi Minh City':
+                            imageUrl = 'c:/Users/Mukil/Downloads/DJI_0550-HDR-Pano.jpg';
+                            break;
+                            case 'Baghdad':
+                            imageUrl = 'c:/Users/Mukil/Downloads/Baghdad-city-Iraq-Tigris-River.webp';
+                            break;
+                            case 'Santiago':
+                            imageUrl = 'c:/Users/Mukil/Downloads/Vitrina_Centro_santiago.jpg';
+                            break;
+                            case 'Riyadh':
+                            imageUrl = 'c:/Users/Mukil/Downloads/images (3).jpg';
+                            break;
+                            case 'Singapore':
+                            imageUrl = 'c:/Users/Mukil/Downloads/2d.jpg';
+                            break;
+                            case 'Toronto':
+                            imageUrl = 'c:/Users/Mukil/Downloads/images (4).jpg';
+                            break;
+                            case 'Kolkata':
+                            imageUrl = 'c:/Users/Mukil/Downloads/Reimagining-Kolkata.jpg';
+                            break;
+                            case 'Nairobi':
+                            imageUrl = 'c:/Users/Mukil/Downloads/fd.jpg';
+                            break;
+                            case 'Washington, D.C.':
+                            imageUrl = 'c:/Users/Mukil/Downloads/washington-dc-gettyimages-74063516.jpg';
+                            break;
+                            case 'Dubai':
+                            imageUrl = 'c:/Users/Mukil/Downloads/Dubai_Skylines_at_night_(Pexels_3787839).jpg';
+                            break;
+                            case 'Sydney':
+                            imageUrl = 'c:/Users/Mukil/Downloads/images (5).jpg';
+                            break;
+                            case 'Hong Kong':
+                            imageUrl = 'c:/Users/Mukil/Downloads/Featured-image-Hong-Kong-skyline-from-Kow-Loon-1244x700.jpg';
+                            break;
+                            case 'Cape Town':
+                            imageUrl = 'c:/Users/Mukil/Downloads/bo-kaap.jpg';
+                            break;
+                            case 'Berlin':
+                            imageUrl = 'c:/Users/Mukil/Downloads/Museumsinsel_Berlin_Juli_2021_1_(cropped).jpg';
+                            break;
+                            case 'Vienna':
+                            imageUrl = 'c:/Users/Mukil/Downloads/vienna-austria-VIENNATG0621-ecb0ee926c2d49c4bce610db594f7405.jpg';
+                            break;
+                            case 'Paris':
+                            imageUrl = 'c:/Users/Mukil/Downloads/marquee-travel-paris-800x450.jpg';
+                            break;
+                            case 'Madrid':
+                            imageUrl = 'c:/Users/Mukil/Downloads/madrid-travel-guide.webp';
+                            break;
+                            case 'Rome':
+                            imageUrl = 'c:/Users/Mukil/Downloads/20220127150143-colosseo-roma-lazio-shutterstock-756032350-1.webp';
+                            break; 
+                            case 'Amsterdam':
+                            imageUrl = 'c:/Users/Mukil/Downloads/24-36Hrs-Amsterdam-01-01-cwqt-superJumbo.jpg';
+                            break;
+                            case 'Stockholm':
+                            imageUrl = 'c:/Users/Mukil/Downloads/images (6).jpg';
+                            break;
+                            case 'Chicago':
+                            imageUrl = 'c:/Users/Mukil/Downloads/images (7).jpg';
+                            break;
+                            
+                        default:
+                            imageUrl = ''; 
+                            break;
+                    }
+                    container.style.backgroundImage = `url('${imageUrl}')`;
+                    container.style.backgroundSize = 'cover';
+                    return fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apiKey}`);
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error fetching air pollution data: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const components = data.list[0].components;
+                    const pm25 = components.pm2_5;
+                    const pm10 = components.pm10;
+                    const o3 = components.o3;
+                    const no2 = components.no2;
+                    const so2 = components.so2;
+                    const co = components.co;
+                    const index = data.list[0].main.aqi;
+                    let condition = getCondition(index);
+                    // Update pollution data smoothly
+                    setTimeout(() => { // Delay to simulate loading effect (optional)
+                        airPollutionDataContainer.innerHTML = `
+                            <div>PM2.5: <span>${pm25} µg/m³</span></div>
+                            <div>PM10: <span>${pm10} µg/m³</span></div>
+                            <div>O3: <span>${o3} µg/m³</span></div>
+                            <div>NO2: <span>${no2} µg/m³</span></div>
+                            <div>SO2: <span>${so2} µg/m³</span></div>
+                            <div>CO: <span>${co} mg/m³</span></div>
+                            <div>AIR QUALITY INDEX: <span>${index}</span></div>
+                            <div>AIR QUALITY CONDITION: <span>${condition}</span></div>
+                        `;
+                    }, 500); // Adjust the delay as needed
+                })
+                .catch(error => {
+                    errorContainer.textContent = error.message;
+                });
+        }
+        // Function to get condition based on AQI
+        function getCondition(index) {
+            if (index == 1) {
+                return "GOOD";
+            } else if (index == 2) {
+                return "FAIR";
+            } else if (index == 3) {
+                return "MODERATE";
+            } else if (index == 4) {
+                return "POOR";
+            } else {
+                return "VERY POOR";
+            }
+        }
+        // Function to move to the next city
+        function nextCity() {
+            currentCityIndex = (currentCityIndex + 1) % majorCities.length;
+            fetchAirPollutionData();
+        }
+        // Function to move to the previous city
+        function previousCity() {
+            currentCityIndex = (currentCityIndex - 1 + majorCities.length) % majorCities.length;
+            fetchAirPollutionData();
+        }
+        // Automatically move to the next city every 10 seconds
+        function autoNextCity() {
+            timerId = setInterval(() => {
+                nextCity();
+            }, 10000); // 10 seconds
+        }
+        // Start auto-next feature when page loads
+        autoNextCity();
+        // Fetch data for the initial city when the window loads
+        window.onload = fetchAirPollutionData;
+        // Stop auto-next feature if the user interacts with navigation buttons
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('click', () => {
+                clearInterval(timerId);
+                autoNextCity();
+            });
+        });
+function fetchAirPollutionData1(cityName) {
+    const airPollutionDataContainer = document.getElementById('airPollutionData1');
+    const errorContainer = document.getElementById('error');
+    const locationElement = document.getElementById('location1');
+    
+    airPollutionDataContainer.textContent = '';
+    errorContainer.textContent = '';
+    
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}`)
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error(`City not found: ${cityName}`);
+                } else {
+                    throw new Error(`Error fetching weather data: ${response.statusText}`);
+                }
+            }
+            return response.json();
+        })
+        .then(data => {
+            const lat = data.coord.lat;
+            const lon = data.coord.lon;
+            const locationName = data.name;
+            locationElement.textContent = locationName;
+            return fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apiKey}`);
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error fetching air pollution data: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            const components = data.list[0].components;
+            const pm25 = components.pm2_5;
+            const pm10 = components.pm10;
+            const o3 = components.o3;
+            const no2 = components.no2;
+            const so2 = components.so2;
+            const co = components.co;
+            const index = data.list[0].main.aqi;
+            let condition = "";
+   
+ 
+            if (index == 1) {
+                var popup = document.getElementById("popup");
+    popup.innerText = "Air quality is excellent, minimal or no health effects expected";
+    var popupMessage = document.getElementById("popupMessage");
+    popupMessage.classList.add("green"); 
+
+    showPopup();
+
+     condition = "GOOD";
+           
+  
+               
+            } else if (index == 2) {
+                var popup = document.getElementById("popup");
+    popup.innerText = "Air quality is good, generally safe for the general population,Sensitive individuals may experience minor respiratory symptoms under prolonged exposure.";
+    var popupMessage = document.getElementById("popupMessage");
+    popupMessage.classList.add("yellow"); 
+
+    showPopup();
+                condition = "FAIR";
+            } else if (index == 3) {
+                var popup = document.getElementById("popup");
+    popup.innerText = "Air quality is moderate, sensitive groups may experience respiratory irritation and discomfort,Sensitive groups may experience increased respiratory symptoms. Long-term exposure may lead to health complications.";
+    var popupMessage = document.getElementById("popupMessage");
+    popupMessage.classList.add("darkyellow"); 
+    showPopup();
+                condition = "MODERATE";
+            } else if (index == 4) {
+                var popup = document.getElementById("popup");
+    popup.innerText = "Air quality is poor, everyone may experience aggravated respiratory issues and increased risk of respiratory infections.  General population may experience respiratory effects, with heightened risk of exacerbation of existing conditions.";
+    var popupMessage = document.getElementById("popupMessage");
+    popupMessage.classList.add("lred"); 
+    showPopup();
+                condition = "POOR";
+            } else {
+                var popup = document.getElementById("popup");
+    popup.innerText = "Health alert: The entire population is at risk of severe health effects. Significant exposure may lead to acute respiratory distress and exacerbation of cardiovascular conditions. Immediate protective actions, such as staying indoors and using air filtration systems, are strongly advised.";
+    var popupMessage = document.getElementById("popupMessage");
+    popupMessage.classList.add("dred"); 
+    showPopup();
+                condition = "VERY POOR";
+            }
+            airPollutionDataContainer.innerHTML = `
+                <div>PM2.5: <span>${pm25} µg/m³</span></div>
+                <div>PM10: <span>${pm10} µg/m³</span></div>
+                <div>O3: <span>${o3} µg/m³</span></div>
+                <div>NO2: <span>${no2} µg/m³</span></div>
+                <div>SO2: <span>${so2} µg/m³</span></div>
+                <div>CO: <span>${co} mg/m³</span></div>
+                <div>AIR QUALITY INDEX: <span>${index}</span></div>
+                <div>AIR QUALITY CONDITION: <span>${condition}</span></div>
+            `;
+            
+            const messageText = `
+  Dear User,
+
+  Here is the latest air pollution data for your area:
+
+  - PM2.5: ${pm25} micrograms per cubic meter 
+    Particulate matter smaller than 2.5 micrometers. These particles can penetrate deep into the lungs and affect respiratory health.
+    
+  - PM10: ${pm10} micrograms per cubic meter 
+    Particulate matter smaller than 10 micrometers. These particles can cause respiratory issues and other health problems.
+    
+  - Ozone (O3): ${o3} micrograms per cubic meter 
+    A gas that can cause respiratory problems and other health issues when present in high concentrations.
+    
+  - Nitrogen Dioxide (NO2): ${no2} micrograms per cubic meter 
+    A gas that can irritate the lungs and lower resistance to respiratory infections.
+    
+  - Sulfur Dioxide (SO2): ${so2} micrograms per cubic meter 
+    A gas that can cause respiratory problems and aggravate existing heart disease.
+    
+  - Carbon Monoxide (CO): ${co} milligrams per cubic meter 
+    A gas that can prevent the blood from carrying oxygen to cells, tissues, and organs.
+    
+  - Air Quality Index (AQI): ${index}
+    An index used to communicate how polluted the air currently is or how polluted it is forecast to become.
+    
+  - Air Quality Condition: ${condition}
+    A qualitative description of the air quality (e.g., Good, Moderate, Unhealthy).
+
+  This is your air quality forecast.
+
+  Your Weather Assistant
+`;
+
+
+const message = new SpeechSynthesisUtterance(messageText);
+const muteButton = document.getElementById('mute-toggle');
+const muteImage = document.getElementById('mute-img');
+let isMuted = localStorage.getItem('isMuted') === 'true';
+
+// Initialize mute state based on local storage
+if (isMuted) {
+    speechSynthesis.cancel();
+    toggleMuteImage(true);
+}
+
+// Speak message on page load if not muted
+window.onload = () => {
+    setVoice();
+    speakMessage();
+};
+
+// Toggle mute on button click
+muteButton.addEventListener('click', () => {
+    isMuted = !isMuted;
+    localStorage.setItem('isMuted', isMuted);
+
+    if (isMuted) {
+        speechSynthesis.cancel();
+    } else {
+        speakMessage();
+    }
+
+    toggleMuteImage(isMuted);
+});
+
+
+function speakMessage() {
+    if (!isMuted) {
+      
+
+        window.speechSynthesis.speak(message);
+       
+    }
+}
+
+
+function setVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    const indianMaleVoice = voices.find(voice => voice.lang === 'en-IN' && voice.name.includes('male'));
+
+    if (indianMaleVoice) {
+        window.speechSynthesis.getVoices().forEach((voice) => {
+            if (voice.lang === 'en-IN' && voice.gender === 'male') {
+                message1.voice = voice;
+                message2.voice = voice;
+            }
+        });
+    } else {
+        console.error('Indian male voice not found. Using default voice.');
+    }
+}
+
+
+function toggleMuteImage(muted) {
+    muteImage.src = muted ? 'C:/Users/Mukil/Downloads/1.png' : 'C:/Users/Mukil/Downloads/360_F_187902352_T0A6TDGN9m68hdBXs9eUo6L72Y1BhYz1-removebg-preview1.png'; // Update image paths for mute and unmute
+    muteImage.alt = muted ? 'Muted' : 'Speaker';
+}
+
+
+window.speechSynthesis.onvoiceschanged = setVoice;
+        })
+
+        .catch(error => {
+            errorContainer.textContent = error.message;
+        });
+       
+}
+
+
+
+document.querySelector('.dropdown-toggle1').addEventListener('click', function(event) {
+    event.preventDefault();
+    document.querySelector('.dropdown-menu1').classList.toggle('show');
+});
+
+        function fetchAirPollutionData32(cityName) {
+            const airPollutionDataContainer = document.getElementById('airPollutionData1');
+            const errorContainer = document.getElementById('error');
+            const locationElement = document.getElementById('location1');
+
+            airPollutionDataContainer.textContent = '';
+            errorContainer.textContent = '';
+
+            fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}`)
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 404) {
+                            throw new Error(`City not found: ${cityName}`);
+                        } else {
+                            throw new Error(`Error fetching weather data: ${response.statusText}`);
+                        }
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const lat = data.coord.lat;
+                    const lon = data.coord.lon;
+                    const locationName = data.name;
+                    locationElement.textContent = `Current Location: ${locationName}`;
+                    return fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apiKey}`);
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error fetching air pollution data: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const components = data.list[0].components;
+                    const pm25 = components.pm2_5;
+                    const pm10 = components.pm10;
+                    const o3 = components.o3;
+                    const no2 = components.no2;
+                    const so2 = components.so2;
+                    const co = components.co;
+                    const index = data.list[0].main.aqi;
+                    let condition = "";
+                    if (index == 1) {
+                        condition = "GOOD";
+                    } else if (index == 2) {
+                        condition = "FAIR";
+                    } else if (index == 3) {
+                        condition = "MODERATE";
+                    } else if (index == 4) {
+                        condition = "POOR";
+                    } else {
+                        condition = "VERY POOR";
+                    }
+
+                  
+                   
+
+                    
+                    createPieChart(pm25, pm10, o3, no2, so2, co);
+                })
+                .catch(error => {
+                    errorContainer.textContent = error.message;
+                });
+        }
+
+       
+        function createPieChart(pm25, pm10, o3, no2, so2, co) {
+            
+            if (myPieChart) {
+                myPieChart.destroy();
+            }
+
+            const ctx = document.getElementById('myPieChart').getContext('2d');
+            myPieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['PM2.5', 'PM10', 'O3', 'NO2', 'SO2', 'CO'],
+                    datasets: [{
+                        label: 'Air Pollution Components',
+                        data: [pm25, pm10, o3, no2, so2, co],
+                        backgroundColor: [
+                            'red',
+                            'blue',
+                            'yellow',
+                            'green',
+                            'purple',
+                            'orange'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return tooltipItem.label + ': ' + tooltipItem.raw.toFixed(2) + ' µg/m³';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        
+window.onclick = function(event) {
+    if (!event.target.matches('.dropdown-toggle1') && !event.target.closest('.dropdown-menu1')) {
+        var dropdowns = document.getElementsByClassName("dropdown-menu1");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+};
+function toggleSlider() {
+        var container = document.getElementById('aqiContainer');
+        var sliderButton = document.querySelector('.slider-button');
+
+        if (container.style.left === '20px') {
+            container.style.left = '-' + (container.offsetWidth + 20) + 'px';
+            sliderButton.textContent = '≡';
+        } else {
+            container.style.left = '20px';
+            sliderButton.textContent = '×';
+        }
+    }
+
+    function pageDown() {
+        window.scrollBy({
+            top: window.innerHeight,
+            behavior: 'smooth'
+        });
+    }
+    function toggleSlider1() {
+            var container = document.getElementById('aqiContainer1');
+            var sliderButton = document.querySelector('.slider-button1');
+
+            if (container.style.right === '20px') {
+                container.style.right = '-300px'; 
+                sliderButton.textContent = '≡';
+            } else {
+                container.style.right = '20px';
+                sliderButton.textContent = '×';
+            }
+        }
+
+        function pageDown() {
+            window.scrollBy({
+                top: window.innerHeight,
+                behavior: 'smooth'
+            });
+        }
+        async function fetchWeatherAndMap(cityName) {
+            try {
+                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${openWeatherAPIKey}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    const latitude = data.coord.lat;
+                    const longitude = data.coord.lon;
+
+                    const iframe = document.getElementById('windy-map');
+                    iframe.src = `https://embed.windy.com/embed.html?type=map&lat=${latitude}&lon=${longitude}&zoom=5&overlay=cosc&message=true`;
+                } else {
+                    throw new Error(`City not found: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                alert(`Error fetching data: ${error.message}. Please try again later.`);
+            }
+        }
+
+        const locationForm = document.getElementById('locationForm');
+        locationForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const cityName = document.getElementById('cityName').value.trim();
+            if (cityName) {
+                fetchWeatherAndMap(cityName);
+            } else {
+                alert('Please enter a city name.');
+            }
+
+        });
+       
+    </script>
+</body>
+</html>
