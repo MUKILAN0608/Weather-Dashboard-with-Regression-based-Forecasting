@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="website icon" type="png" href="c:\Users\Mukil\Downloads\logo-removebg-preview.png">
+    <title>Daily forcast</title>
+
+    <style>
+        nav {
+    position: fixed;
+    top: 1px; 
+    left: 10px; 
+    right: 10px;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    border-radius: 15px; 
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1000;
+    border: 2px solid transparent;
+    animation: neon 1.5s infinite alternate;
+    font-size: 12px; 
+}
+.menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+    
+        .menu-item {
+            position: relative;
+            margin: 0 10px;
+        }
+    
+        .menu-item a, .dropdown-menu a, .dropdown-menu button {
+            display: block;
+            color: #007bff;
+            text-align: center;
+            background-color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1em;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 5px;
+            border: 2px solid transparent;
+        }
+    
+        .menu-item a:hover, .dropdown-menu a:hover, .dropdown-menu button:hover {
+            color: white;
+            background-color: #007bff;
+          
+            transform: scale(1.05);
+           
+            border-color: #007bff;
+            border-radius: 25px; 
+        }
+    
+        .menu-item a button {
+            all: unset;
+            cursor: pointer;
+        }
+    
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: white;
+            top: 100%;
+            left: 0;
+            min-width: 150px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    
+        .dropdown-menu li {
+            padding: 0;
+            margin: 0;
+        }
+    
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+@keyframes neon {
+    0% {
+        box-shadow: 0 0 10px white, 0 0 20px white, 0 0 30px white, 0 0 40px white, 0 0 50px white;
+        border-color: white;
+    }
+    100% {
+        box-shadow: 0 0 20px #ffffff, 0 0 30px #ffffff, 0 0 40px #ffffff, 0 0 50px #ffffff, 0 0 60px #ffffff;
+        border-color: #ffffff;
+    }
+}
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+/* Navbar styles */
+.navbar {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-start;
+}
+.menu-item {
+    position: relative;
+}
+.dropdown-toggle1 {
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 15px;
+   
+    color: #1976d2;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+}
+.dropdown-toggle1:hover {
+    background-color: #0056b3;
+}
+.dropdown-menu1 {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: calc(100% - 320px); 
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+    padding: 10px;
+    min-width: 300px;
+    margin-top: 5px;
+}
+.dropdown-menu1.show {
+    display: block;
+}
+.dropdown-menu1 li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.dropdown-menu1 li:last-child {
+    margin-bottom: 0;
+}
+.dropdown-menu1 label {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #333;
+}
+.select-box {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #fff;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+}
+.select-box:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+.select-box option {
+    padding: 8px;
+}
+body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            background-color:rgba(255, 255, 255, 0.8);
+            color: darkblue;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 800px;
+            margin-top: 30px;
+            max-width: 90%;
+            overflow: hidden;
+        }
+
+        .search-form {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 200px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .search-button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 14px;
+        }
+
+        .search-button:hover {
+            background-color: #0056b3;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 20px;
+        }
+
+        .result {
+            margin-top: 20px;
+        }
+
+        .prediction-result {
+            text-align: left;
+            padding: 10px;
+        }
+
+        .prediction-result h2 {
+            margin-top: 0;
+            font-size: 18px;
+            color: #555;
+        }
+
+        .prediction-result p {
+            margin: 5px 0;
+            font-size: 16px;
+            color: #777;
+        }
+        
+    .voice-button {
+    padding: 0;
+    background-color: #007bff;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    display: block;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    position: absolute;
+    top: 73px;
+    left: 900px;
+    z-index: 1; /* Adjust this value */
+}
+
+.voice-button:hover {
+    background-color: #0056b3;
+}
+    </style>
+</head>
+<body>
+    <nav>
+        <ul class="menu">
+            
+         
+                <li class="menu-item">
+                    <a>
+                        <button onclick="goBack15()">CURRENT WEATHER</button>
+                    </a>
+                </li>
+          
+            
+        
+            
+                <li class="menu-item">
+                    <a><button onclick="goBack17()" id="api">WEATHER MAP</button></a>
+                    
+                </li>
+            <li class="menu-item dropdown">
+                <a href="#" class="dropdown-toggle">FUTURE FORECAST</a>
+                <ul class="dropdown-menu">
+                    
+                    <li><a><button onclick="goBack16()" id="hourlyButton">HOURLY</button></a></li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <a><button onclick="goBack144()" id="api">WEATHER ON MAJOR CITIES</button></a>
+              </li>
+            <li class="menu-item">
+                <a>
+                    <button onclick="goBack20()">WEATHER HISTORY</button>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a>
+                    <button onclick="goBack18()">AIR POLLUTION INDEX</button>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a>
+                    <button onclick="goBack19()">MARINE WEATHER REPORT</button>
+                </a>
+            </li>
+           
+    
+    </nav>
+    
+    <form class="search-form" onsubmit="handleSubmit(event)">
+        <input type="text" id="city-input" class="search-input" placeholder="Enter city...">
+        <button type="submit" class="search-button">Search</button>
+        <div id="voiceSearchButtonPopup" class="voice-button" onclick="startVoiceRecognition('input')">
+            <img src="c:/Users/Mukil/Downloads/pngtree-vector-microphone-icon-png-image_4013734-removebg-preview.png" alt="microphone" style="width: 100%; height: 100%;">
+        </div>
+    </form>
+    <div class="container">
+        <div id="error-message" class="error-message"></div>
+        <div id="result" class="result"></div>
+        <div class="prediction-result">
+            <h2 style="color: darkblue;">Predicted Temperature</h2>
+            <p style="color: darkblue;" id="predicted-temperature-celsius" >Calculating...</p>
+            <p  style="color: darkblue;"id="predicted-temperature-fahrenheit">Calculating...</p>
+        </div>
+
+        <div class="prediction-result">
+            <h2 style="color: darkblue;">Predicted Humidity</h2>
+            <p style="color: darkblue;"id="predicted-humidity">Calculating...</p>
+        </div>
+
+        <div class="prediction-result">
+            <h2 style="color: darkblue;">Predicted Precipitation</h2>
+            <p id="predicted-precipitation-mm" style="color: darkblue;">Calculating...</p>
+            <p id="predicted-precipitation-inch" style="color: darkblue;">Calculating...</p>
+        </div>
+    </div>
+    
+</body>
+<script>
+            
+            const time = new Date().getHours();
+if (time >= 6 && time < 16) {
+    document.body.style.backgroundImage = 'url("c:/Users/Mukil/Downloads/noon sky (2) (2).jpg")';
+} else if (time >= 16 && time < 19) {
+    document.body.style.backgroundImage = 'url("c:/Users/Mukil/Downloads/depositphotos_582319764-stock-photo-summer-evening-stormy-sky (1).jpg")';
+} else {
+    document.body.style.backgroundImage = 'url("c:/Users/Mukil/Downloads/pexels-pixabay-414727 (1).jpg")';
+}
+const timeZoneDBAPIKey = 'XB6EHS2NKPG6';
+        const weatherAPIKey = '867d51f06cc24c1783a82226240209'
+              function startVoiceRecognition(inputId) {
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.interimResults = true;
+        recognition.onresult = function(event) {
+            const last = event.results.length - 1;
+            let command = event.results[last][0].transcript.trim();
+            if (command.endsWith(".")) {
+                command = command.slice(0, -1);
+            }
+            document.getElementById('city-input').value = command; 
+           
+        handleCityInput(command);
+            fetchHistoricalWeather(command);
+
+        };
+        recognition.start();
+    } else {
+        alert('Speech recognition is not supported in your browser. Please use Chrome or Edge.');
+    }
+}
+document.addEventListener('DOMContentLoaded', (event) => {
+    const params = new URLSearchParams(window.location.search);
+    const encodedCityName = params.get('city');
+    
+    if (encodedCityName) {
+        const cityName = decodeURIComponent(encodedCityName);
+        handleCityInput(cityName);
+        fetchHistoricalWeather(cityName);
+      
+    } else {
+        console.error('City name not found in URL parameters.');
+    }
+});
+async function fetchTimeAndDate(city) {
+    const apiUrl = `https://api.timezonedb.com/v2.1/get-time-zone?key=${timeZoneDBAPIKey}&format=json&by=zone&zone=${city}`;
+    console.log('Fetching time and date from:', apiUrl);
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error('Network response was not ok.');
+        }
+        const data = await response.json();
+        console.log('Time and Date data:', data);
+        if (data.status === 'FAILED') {
+            throw new Error(data.message);
+        }
+        const currentDate = new Date(data.formatted);
+        const nextDate = new Date(currentDate);
+        nextDate.setDate(currentDate.getDate()); 
+
+        const nextDateFormatted = formatDate(nextDate); 
+
+        return {
+            nextDate: nextDateFormatted
+        };
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw new Error('Error fetching data: ' + error.message);
+    }
+}
+
+
+
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth()).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+      
+
+
+        async function fetchHistoricalWeather(location) {
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(endDate.getDate() - 90);
+
+            const startDateStr = formatDateForAPI(startDate);
+            const endDateStr = formatDateForAPI(endDate);
+
+            const apiUrl = `https://api.weatherapi.com/v1/history.json?key=${weatherAPIKey}&q=${location}&dt=${startDateStr}&end_dt=${endDateStr}`;
+            console.log('Fetching historical weather from:', apiUrl); 
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok.');
+                }
+                const data = await response.json();
+                console.log('Historical Weather data:', data); 
+                prepareDataForRegression(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        function formatDateForAPI(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth()).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function prepareDataForRegression(data) {
+            const weatherData = data.forecast.forecastday;
+
+            const xTemperature = [];
+            const yTemperature = [];
+            const xHumidity = [];
+            const yHumidity = [];
+            const xPrecipitation = [];
+            const yPrecipitation = [];
+
+            weatherData.forEach(day => {
+                const temperature = day.day.maxtemp_c;
+                const humidity = day.day.avghumidity;
+                const precipitation = day.day.totalprecip_mm;
+
+                if (precipitation >= 0) {
+                    xTemperature.push([humidity, precipitation]);
+                    yTemperature.push(temperature);
+
+                    xHumidity.push([temperature, precipitation]);
+                    yHumidity.push(humidity);
+
+                    xPrecipitation.push([temperature, humidity]);
+                    yPrecipitation.push(precipitation);
+                }
+            });
+
+            if (xTemperature.length > 0 && yTemperature.length > 0) {
+                const { slope: tempSlope, intercept: tempIntercept } = linearRegression(xTemperature, yTemperature);
+
+                const humidityInput = 60;
+                let predictedTemperatureCelsius = tempSlope * humidityInput + tempIntercept;
+                document.getElementById("predicted-temperature-celsius").textContent = predictedTemperatureCelsius.toFixed(2) + " °C";
+
+                let predictedTemperatureFahrenheit = (predictedTemperatureCelsius * 9 / 5) + 32;
+                document.getElementById("predicted-temperature-fahrenheit").textContent = predictedTemperatureFahrenheit.toFixed(2) + " °F";
+
+            }
+
+            if (xHumidity.length > 0 && yHumidity.length > 0) {
+                const { slope: humidSlope, intercept: humidIntercept } = linearRegression(xHumidity, yHumidity);
+
+                const temperatureInput = 25;
+                let predictedHumidity = humidSlope * temperatureInput + humidIntercept;
+                document.getElementById("predicted-humidity").textContent = predictedHumidity.toFixed(2) + " %";
+            }
+
+            if (xPrecipitation.length > 0 && yPrecipitation.length > 0) {
+                const { slope: precipSlope, intercept: precipIntercept } = linearRegression(xPrecipitation, yPrecipitation);
+
+                const temperatureInput = 25;
+                const humidityInput = 60;
+                let predictedPrecipitationMM = precipSlope * temperatureInput + precipIntercept;
+predictedPrecipitationMM = Math.max(predictedPrecipitationMM, 0);
+let predictedPrecipitationInch = predictedPrecipitationMM * 0.0393701;
+predictedPrecipitationInch = Math.max(predictedPrecipitationInch, 0);
+
+document.getElementById("predicted-precipitation-mm").textContent = predictedPrecipitationMM.toFixed(2) + " mm";
+document.getElementById("predicted-precipitation-inch").textContent = predictedPrecipitationInch.toFixed(2) + " inches";
+
+
+              
+            }
+        }
+
+        function linearRegression(x, y) {
+            const n = x.length;
+            const xMean = x.reduce((acc, curr) => acc + curr[0], 0) / n;
+            const yMean = y.reduce((acc, curr) => acc + curr, 0) / n;
+
+            let numerator = 0;
+            let denominator = 0;
+
+            for (let i = 0; i < n; i++) {
+                const xVal = x[i][0];
+                const yVal = y[i];
+
+                numerator += (xVal - xMean) * (yVal - yMean);
+                denominator += (xVal - xMean) * (xVal - xMean);
+            }
+
+            const slope = numerator / denominator;
+            const intercept = yMean - (slope * xMean);
+
+            return { slope, intercept };
+        }
+
+        async function handleCityInput(cityInput) {
+    const errorMessage = document.getElementById("error-message");
+    const result = document.getElementById("result");
+
+    if (!cityInput) {
+        errorMessage.textContent = "Please enter a city name.";
+        return;
+    }
+
+    try {
+        errorMessage.textContent = '';
+        result.innerHTML = '';
+
+        const { currentDate, nextDate } = await fetchTimeAndDate(cityInput);
+
+        result.innerHTML = `
+            <h1>Prediction in ${cityInput}</h1>
+            
+            <h1>Prediction for Tomorrow</h1>
+        `;
+
+        await fetchHistoricalWeather(cityInput);
+
+    } catch (error) {
+        console.error(error);
+        errorMessage.textContent = 'Error fetching data: ' + error.message;
+    }
+}
+
+
+
+function formatDate(date) {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+}
+async function handleSubmit(event) {
+            event.preventDefault();
+            const cityInput = document.getElementById("city-input").value;
+            const errorMessage = document.getElementById("error-message");
+            const result = document.getElementById("result");
+
+            if (!cityInput) {
+                errorMessage.textContent = "Please enter a city name.";
+                return;
+            }
+
+            try {
+                errorMessage.textContent = '';
+                result.innerHTML = '';
+
+                const { currentDate, nextDate } = await fetchTimeAndDate(cityInput);
+
+                result.innerHTML = `
+                    <h1>Time and Date for ${cityInput}</h1>
+                  
+                    <h1>Prediction for Tomorrow</h1>
+                `;
+
+                await fetchHistoricalWeather(cityInput);
+
+            } catch (error) {
+                console.error(error);
+                errorMessage.textContent = 'Error fetching data: ' + error.message;
+            }
+        }
+        function goBack15() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); 
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'weather dashboard.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack16() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); 
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'HOURLY.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack17() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); 
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'map.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack18() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); 
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'air.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack19() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); 
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'marine.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack20() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); 
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'pastweather.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack144() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); 
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'major.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+</script>
+</html>
