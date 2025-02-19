@@ -1,0 +1,3604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current Weather Report</title>
+    <link rel="website icon" type="png" href="c:\Users\Mukil\Downloads\logo-removebg-preview.png">
+    <link rel="stylesheet" href="weather dashboard.css">
+</head>
+<style>
+body {
+    font-family: 'Times New Roman', Times, serif;
+    color:#00008B;
+    background-color:white;
+    transition: background-color 0.3s ease; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.5s ease-in-out;
+}
+.modal-content {
+    padding: 50px;
+    border-radius: 15px;
+    text-align: center;
+    height: 480px;
+    max-width: 720px;
+    margin: 10% auto;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    position: relative;
+    animation: slideIn 0.5s ease-in-out;
+    background-color: rgba(220, 53, 69, 0.8);
+    color: white;
+}
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close-btn:hover,
+        .close-btn:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+.image{
+    width: 100px;
+    height: auto;
+    margin-bottom: 20px;
+}
+  .notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f44336;
+    color: white;
+    text-align: center;
+    padding: 15px 30px;
+    border-radius: 5px;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    animation: fadeInOut 3s ease-in-out;
+}
+
+
+.notification.show {
+    display: block;
+}
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(to right, #63a4ff, #1976d2);
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 400px;
+    border-radius: 8px;
+}
+
+.popup-content {
+    text-align: center;
+    color: #fff;
+}
+
+.popup.show {
+    display: block;
+}
+
+  
+  .input-field {
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: none;
+    width: 100%;
+  }
+  
+  .button {
+    background-color: #fff;
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+  
+  .button:hover {
+    background-color: #1976d2;
+    color: #fff;
+  }
+  .notification {
+    display: none;
+    position: fixed;
+    top: 20px; 
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #ffdddd;
+    color: #ff0000;
+    z-index: 1000;
+    max-width: 400px;
+    text-align: center;
+}
+
+.notification.error {
+    color: #ff0000;
+}
+
+.notification.show {
+    display: block;
+}
+
+
+
+  
+/* LOCATION */
+.center-container {
+    text-align: center;
+    width: 80%; 
+    margin: auto; 
+}
+
+#city-input {
+    height: 25px;
+    width: 300px; 
+    padding: 5px; 
+    border-radius: 5px;
+    border: 1px solid #ccc; 
+}
+
+.location {
+    padding: 10px 20px;
+    margin: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.location:hover {
+    background-color:#00008B; 
+}
+/*SUN AND MOON */
+
+.container3 {
+    position: absolute;
+    top: 250px;
+    left: 60px;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    max-width: 160px;
+    width: 100%;
+}
+
+
+.sun, .moon {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+
+.sun::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+
+.sun img, .moon img {
+    width: 40px;
+    height: auto;
+    display: block;
+    margin-right: 15px;
+}
+
+
+.text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    flex-wrap: nowrap;
+}
+
+
+.text-container b {
+    font-size: 14px;
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+
+.sun span, .moon span {
+    font-size: 12px;
+    display: inline-flex;
+}
+
+
+/* MENU BAR */
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 20px; /* Adjusted padding */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 25px; /* Adjusted border-radius */
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1000;
+    border: 2px solid transparent;
+    animation: neon 1.5s infinite alternate;
+    font-size: 14px; /* Adjusted font-size */
+}
+
+  
+        .menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+    
+        .menu-item {
+            position: relative;
+            margin: 0 10px;
+        }
+    
+        .menu-item a, .dropdown-menu a, .dropdown-menu button {
+            display: block;
+            color: #007bff;
+            text-align: center;
+            background-color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1em;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 5px;
+            border: 2px solid transparent;
+        }
+    
+        .menu-item a:hover, .dropdown-menu a:hover, .dropdown-menu button:hover {
+            color: white;
+            background-color: #007bff;
+          
+            transform: scale(1.05);
+           
+            border-color: #007bff;
+            border-radius: 25px; /* Rounded corners on hover */
+        }
+    
+        .menu-item a button {
+            all: unset;
+            cursor: pointer;
+        }
+    
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: white;
+            top: 100%;
+            left: 0;
+            min-width: 150px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    
+        .dropdown-menu li {
+            padding: 0;
+            margin: 0;
+        }
+    
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+@keyframes neon {
+    0% {
+        box-shadow: 0 0 10px white, 0 0 20px white, 0 0 30px white, 0 0 40px white, 0 0 50px white;
+        border-color: white;
+    }
+    100% {
+        box-shadow: 0 0 20px #ffffff, 0 0 30px #ffffff, 0 0 40px #ffffff, 0 0 50px #ffffff, 0 0 60px #ffffff;
+        border-color: #ffffff;
+    }
+}
+
+
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Navbar styles */
+.navbar {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.menu-item {
+    position: relative;
+}
+
+.dropdown-toggle1 {
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 15px;
+   
+    color: #1976d2;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.dropdown-toggle1:hover {
+    background-color: #0056b3;
+}
+
+.dropdown-menu1 {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: calc(100% - 320px); /* Adjust this value as needed */
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+    padding: 10px;
+    min-width: 300px;
+    margin-top: 5px;
+}
+
+
+.dropdown-menu1.show {
+    display: block;
+}
+
+.dropdown-menu1 li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.dropdown-menu1 li:last-child {
+    margin-bottom: 0;
+}
+
+.dropdown-menu1 label {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+.select-box {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #fff;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+}
+
+.select-box:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.select-box option {
+    padding: 8px;
+}
+
+/* Switch toggle styles */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 28px;
+    vertical-align: middle;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color:red;
+    transition: .4s;
+    border-radius: 28px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #4CAF50;
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+.slider.round {
+    border-radius: 28px;
+}
+
+.input-box {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 10px;
+}
+
+.button {
+    cursor: pointer;
+    font-size: 14px;
+    padding: 8px 12px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.button:hover {
+    background-color: #218838;
+}
+
+.button.subscribed {
+    background-color: #dc3545;
+}
+
+.button.subscribed:hover {
+    background-color: #c82333;
+}
+
+/* Textarea for current city */
+.current-city {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: none;
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+/* DATE */
+.date-container {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px; 
+    background-color: #ffffff;
+    border-radius: 8px; 
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); 
+    text-align: center; 
+}
+
+.date-container b,
+.date-container .DATE {
+    font-weight: bold; 
+    display: inline-block;
+    margin: 0 3px; 
+}
+
+.date-container img {
+    width: 40px; 
+    height: auto; 
+}
+
+.current-time-container {
+    display: flex; 
+    align-items: center; 
+    margin-right: 20px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* WEATHER REPORT */
+header {
+
+    margin-bottom: 20px;
+}
+
+.container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start; 
+    padding: 40px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    width: 600px;
+    height: 270px;
+    margin: 50px 0; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative; 
+    left: -100px; 
+    
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+    padding: 10px;
+    background-color: #fff;
+   
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color:white;
+    box-sizing: border-box; 
+}
+
+.weather-report {
+    margin-bottom: 20px;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.column div {
+    margin-bottom: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box; 
+}
+
+.column img {
+    width: 40px;
+    height: auto;
+    margin-right: 4px;
+}
+
+.column b {
+    font-weight: bold;
+}
+
+
+
+
+/* FOOD */
+.recommendation-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; 
+    position: fixed;
+    top: 70px; 
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+
+  .recommendation {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+  }
+
+  .options {
+    margin-top: 20px;
+  }
+
+  .f {
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+  }
+
+  #recommended-btn {
+    background-color: green;
+    color: white;
+  }
+
+  #not-recommended-btn {
+    background-color: red;
+    color: white;
+  }
+  .foods {
+    background-color: rgba(255, 255, 255, 0.5); 
+    color: #00008B; 
+    position: absolute;
+    top: 80px; 
+    right: 20px; 
+    border-radius: 10px;
+    padding: 15px 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    border: 1px solid #e0e0e0;
+    display: none; 
+}
+
+.foods .rec {
+    font-weight: bold;
+    font-size: 16px; 
+    color: #00008B; 
+}
+
+.fullscreen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Adjust the opacity and color as needed */
+    z-index: 999;
+    display: none; /* Initially hidden */
+}
+
+
+.recommendation .options {
+    display: flex;
+    justify-content: space-between;
+}
+
+.f {
+    cursor: pointer;
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.weatherdaynight span {
+    color: #00008B;
+}
+.temperature {
+    font-size: 24px;
+    position: absolute;
+    top: 90px;
+    left: 80px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    background-color: #FFFFFF;
+    box-shadow: 0 0 10px rgba(0, 0, 139, 0.3);
+    z-index: 1;
+    border: 1px solid rgba(0, 0, 139, 0.2);
+    transition: box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.temperature:hover {
+    box-shadow: 0 0 20px rgba(0, 0, 139, 0.6);
+}
+
+/* Cursor StYLEe for Temperature L*/
+.temperature-label {
+    cursor: pointer;
+    color: #00008B;
+    font-weight: bold;
+}
+
+
+#temperature-value {
+    cursor: pointer;
+    color: #00008B;
+}
+
+#temperature-value::after {
+    content: 'C';
+    transition: transform 0.3s ease;
+}
+
+
+#unit-toggle:checked ~ #temperature-value::after {
+    content: 'F';
+    transform: translateY(1px);
+}
+
+
+.unit-toggle {
+    display: none;
+    cursor: pointer;
+}
+/*LOCATION */
+.location1 {
+    display: inline-flex; 
+    align-items: center; 
+    padding: 2px; 
+    background-color: #ffffff;
+    border-radius: 5px; 
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2); 
+    text-align: center; 
+}
+
+.location1 b,
+.location1 {
+    font-weight: bold; 
+    display: inline-block; 
+    margin: 0 2px; 
+}
+
+.location1 img {
+    width: 30px; 
+    height: auto; 
+}
+
+.feeltemp {
+    background-color: rgba(255, 255, 255, 0.5);
+    color: #00008B; 
+    position: absolute;
+    top: 450px; 
+    right: 20px; 
+    border-radius: 10px;
+    padding: 15px 20px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    border: 1px solid #e0e0e0; 
+}
+
+.feeltemp img {
+    width: 30px; 
+    height: auto; 
+}
+#hourlyButton {
+    background: none;
+    border: none; 
+    padding: 0; 
+    font: inherit; 
+    cursor: pointer; 
+    color:#63a4ff;
+}
+#hourlyButton:hover{
+    background-color:#63a4ff;
+    color: white;
+    
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+  
+  .switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ff0000; /* Change to red */
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: green;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px green;
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+  
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+  .popup12 {
+    position: absolute;
+    background-color: #F0FFFF;
+    color: black;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    max-width: 300px;
+    display: none;
+    z-index: 1000;
+    border-radius: 8px;
+    animation: fade-in 0.1s ease-out;
+}
+
+
+
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.clickable-text {
+    cursor: pointer;
+    
+}
+.dd{
+    color: black;
+}
+.popup123 {
+    position: absolute;
+    background-color: #F0FFFF;
+    color: black;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    max-width: 300px;
+    display: none;
+    z-index: 1000;
+    border-radius: 8px;
+    animation: fade-in 0.1s ease-out;
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
+}
+.voice-button {
+    padding: 0;
+    background-color:#007bff;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    position: absolute;
+    top: 114px; 
+
+    left: 940px;;
+}
+
+.voice-button:hover {
+    background-color: #0056b3;
+}
+#message-container {
+    font-size: 2em;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#mute-toggle {
+    background-color: #007bff; /* Bootstrap blue color */
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s;
+    position: absolute;
+    top: 124px; /* Adjust this value to position it lower or higher */
+    right: 970px; /* Adjust this value to position it left or right */
+    z-index: 1000; /* Ensure it's on top of other elements */
+}
+
+
+#mute-toggle:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+#mute-img {
+    width: 70%;
+    height: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+</style>
+<body id="body">
+ 
+    <nav>
+        <ul class="menu">
+            <li class="menu-item">
+                <a><button onclick="goBack15()" id="api">WEATHER MAP</button></a>
+                
+            </li>
+            <li class="menu-item dropdown">
+                <a href="#" class="dropdown-toggle">FUTURE FORECAST</a>
+                <ul class="dropdown-menu">
+                    <li><a><button onclick="redirectToHourlyPage() " id="hourlyButton">HOURLY</button></a></li>
+                    <li><a><button onclick="goBack19()" id="hourlyButton">DAILY</button></a></li>
+                   
+                </ul>
+            </li>
+            <li class="menu-item">
+                <a><button onclick="goBack144()" id="api">WEATHER ON MAJOR CITIES</button></a>
+              </li>
+            <li class="menu-item">
+                <a><button onclick="goBack14()" id="api">WEATHER HISTORY</button></a>
+                
+            </li>
+            <li class="menu-item">
+                <a><button onclick="goBack11()" id="api">AIR POLLUTION INDEX</button></a>
+            </li>                                                                                                                                                      
+            <li class="menu-item">
+                <a><button onclick="goBack12()" id="api">MARINE WEATHER REPORT</button></a>
+                
+            </li>
+            <li class="menu-item dropdown1">
+                <a class="dropdown-toggle1" href="#">⚙ SETTINGS</a>
+                <ul class="dropdown-menu1">
+                    <li class="menu-item">
+                        <label class="switch">
+                            <input type="checkbox" id="recommendation-checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                        <label for="recommendation-checkbox">Food Recommendation</label>
+                    </li>
+                    
+                    <li>
+                        <label class="switch">
+                            <input type="checkbox" id="descrp">
+                            <span class="slider round"></span>
+                        </label>
+                        <label>Descriptive text</label>
+                    </li>
+                </ul>
+            </li>
+            
+            
+    
+    </nav>
+               
+                    
+    <center>
+        <div class="center-container">
+            <div class="search-box">
+                <br>
+                <br>
+                <br>
+                <label for="city-input" style="color: white;"><h2>CHOOSE THE CITY</h2></label>
+                <br>
+                <input type="text" id="city-input" placeholder="Enter city name">
+                <button onclick="fetchCityFromSearch()" class="location" id="cityButton">Search</button>
+                <div class="clickable-text" onmouseover="showPopup('mp')" onmouseout="hidePopup('mp')">
+                    <div id="voiceSearchButtonPopup" class="voice-button" onclick="startVoiceRecognition('input')">
+                        <img src="c:/Users/Mukil/Downloads/pngtree-vector-microphone-icon-png-image_4013734-removebg-preview.png" alt="microphone" style="width: 100%; height: 100%;">
+                    </div>
+                    <div id="mp" class="popup12" onmouseover="clearTimeout(popupTimeout)" onmouseout="hidePopup('mp')">
+                        <div class="popup-content1">
+                            <p>Welcome to our voice search feature. Make sure you pronounce the city name properly, this feature works accurately around 80% in fetching the city name.</p>
+                        </div>
+                    </div>
+                </div>
+        
+          
+                
+            
+            <br>
+            <div id="message-container"></div>
+            <button id="mute-toggle">
+                <img id="mute-img" src="C:\Users\Mukil\Downloads\360_F_187902352_T0A6TDGN9m68hdBXs9eUo6L72Y1BhYz1-removebg-preview1.png" alt="Speaker">
+            </button>
+
+            <div class="location1">
+                <img src="c:\Users\Mukil\Downloads\58d4807978fba1b9e7558274b9206f-unscreen.gif">
+                
+    <span class="clickable-text" onmouseover="showPopup('loce')" onmouseout="hidePopup('loce')">
+        <b>Location:</b><b id="loc"></b>
+    </span>
+
+    <div id="loce" class="popup12" onmouseover="clearTimeout(popupTimeout)" onmouseout="hidePopup('loce')">
+        <div class="popup-content1">
+            <p>The specific geographical point or area where current weather conditions are observed.</p>
+        </div>
+    </div>
+            </div>
+            
+            </div>
+           
+            <br>
+            <br>
+            <div class="date-container">
+                <img src="c:\Users\Mukil\Downloads\timely-dribbble-unscreen.gif">
+                <span class="clickable-text" onmouseover="showPopup('dat')" onmouseout="hidePopup('dat')">
+                    <b id="date-label">TODAY'S DAY & DATE:</b><b id="date" labelledby="date-label"></b>
+                </span>
+            
+                <div id="dat" class="popup12" onmouseover="clearTimeout(popupTimeout)" onmouseout="hidePopup('dat')">
+                    <div class="popup-content1">
+                        <p>The current day and date based on the location</p>
+                    </div>
+                </div>
+            
+        
+             
+            <div class=feeltemp>
+                <div class="temp-container">
+                    
+                    <img src="c:\Users\Mukil\Downloads\giphy (4).gif">
+
+                   
+                        <b>MINIMUM TEMPERATURE:</b><b id="min"></b>/<b id="min20"></b>
+                    
+                </div>
+                
+                <br>
+                <img src="c:/Users/Mukil/Downloads/thumb-unscreen.gif" alt="Maximum Temperature Icon">
+                <b>MAXIMUM TEMPERATURE:</b><b id="max"></b>/</b><b id="min21"></b>
+                <br>
+                <img src="c:/Users/Mukil/Downloads/84586d8e718db7c-unscreen.gif" alt="Feels Like Temperature Icon">
+                <b>FEELS LIKE:</b><b id="feel"></b></b>/<b id="min22"></b>
+
+            </div>
+        </div>
+        <div class="container" id="container">
+        <div class="weather-report"></div>
+        <div class="column" id="column">
+            <div class="current-time-container">
+                <img src="c:\Users\Mukil\Downloads\clock-unscreen.gif">
+              <b>CURRENT TIME:</b><b class="time" id="time">11:11</b>
+               
+                </div>
+        
+                <div class="current-temp-container">
+                    <img src="c:\Users\Mukil\Downloads\gif-arts-unscreen.gif"><b>TEMPERATURE:</b><b id="temp1"></b>/<b id="cel56"></b><b id="cel4"> </b>
+                  
+                </div>
+                <div class="current-wp-container">
+                    <img src="c:\Users\Mukil\Downloads\Anemometer-Animation-unscreen (1).gif"> <b>WIND SPEED:</b><b id="temp2"></b>/<b id="cel1"></b>
+                   
+                </div>
+                <div class="current-dp-container">
+                    <img src="c:\Users\Mukil\Downloads\giphy (1).gif"> <b>PRESSURE:</b><b id="temp3"></b><b id="cel2"></b>
+                   
+                </div>
+            </div>
+            <div class="column" id="column1">
+                <div class="weather">
+                    <img id="weather-icon" alt="Weather Icon"><b>WEATHER CONDITION:</b><b id="temp5"></b><b id="weather-report"></b>
+                    
+                </div>
+                <div class="uv">
+                    <img src="c:\Users\Mukil\Downloads\Untitled-design-26--unscreen.gif"><b>CLOUDINESS:</b><b id="temp4"></b><b id="cel3"></b>
+                    
+                </div>
+                <div class="humidity">
+                    <img src="c:\Users\Mukil\Downloads\animated_humidity.gif"><b>HUMIDITY:</b><b id="temp6"></b><b id="cel5"></b>
+                    
+                </div>
+                <div class="vis">
+                    <img src="c:\Users\Mukil\Downloads\9fd7b0c0bd4927a39e66c4e43b40b8-unscreen.gif"><b>VISIBILITY:</b><b id="temp7"></b><b id="cel6">m</b>
+                    
+                </div>
+            </div>
+        </div>
+     
+       
+      
+
+<div id="notification" class="notification">
+    <span id="notificationMessage"></span>
+</div>
+
+      
+
+    </div>
+</div>
+
+<div class="container3">
+    <div class="sun">
+        <img id="sun-image" src="c:/Users/Mukil/Downloads/png-transparent-animation-sun-orange-sunflower-computer-wallpaper-thumbnail-removebg-preview.png" alt="Sun Image">
+        <div class="text-container">
+            <span class="clickable-text" onmouseover="showPopup('sr')" onmouseout="hidePopup('sr')">  <b>SUN RISE</b>
+            <span id="sunrise"></span>
+        </span>
+
+        <div id="sr" class="popup123" onmouseover="clearTimeout(popupTimeout)" onmouseout="hidePopup('sr')">
+            <div class="popup-content1">
+                <p>Sunrise is when the sun first becomes visible above the horizon in the morning</p>
+            </div>
+        </div>
+        <span class="clickable-text" onmouseover="showPopup('sc')" onmouseout="hidePopup('sc')"> 
+            <b>SUN SET</b><span id="sunset"></span> </span>
+            <div id="sc" class="popup123" onmouseover="clearTimeout(popupTimeout)" onmouseout="hidePopup('sc')">
+                <div class="popup-content1">
+                    <p>Sunset is the event when the sun disappears below the horizon in the west</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="moon">
+        <img id="moon-image" src="" alt="Moon Image">
+        <div class="text-container">
+            <span class="clickable-text" onmouseover="showPopup('mr')" onmouseout="hidePopup('mr')"> 
+            <b>MOON RISE</b><span id="moonrise"></span>
+            <div id="mr" class="popup123" onmouseover="clearTimeout(popupTimeout)" onmouseout="hidePopup('mr')">
+                <div class="popup-content1">
+                    <p>Moonrise is the event when the moon first appears above the horizon in the east</p>
+                </div>
+           </div>
+           </span>
+           <span class="clickable-text" onmouseover="showPopup('ms')" onmouseout="hidePopup('ms')"> 
+            <b>MOON SET</b><span id="moonset"></span> 
+            <div id="ms" class="popup12" onmouseover="clearTimeout(popupTimeout)" onmouseout="hidePopup('ms')">
+                <div class="popup-content1">
+                    <p>Moonset is the event when the moon disappears below the horizon in the west.</p>
+                </div>
+           </div>
+           </span>
+           <span class="clickable-text" onmouseover="showPopup('mp')" onmouseout="hidePopup('mp')"> 
+            <b>MOON PHASE</b><span id="moonphase"></span>
+            <div id="mp" class="popup12" onmouseover="clearTimeout(popupTimeout)" onmouseout="hidePopup('mp')">
+                <div class="popup-content1">
+                    <p>A moon phase is the visible shape of the moon's sunlit portion as seen from Earth</p>
+                </div>
+           </div>
+           </span>
+        </div>
+    </div>
+</div>
+<div id="recommendation" class="foods">
+    <div class="rec"></div>
+    <b>RECOMMENDED FOODS FOR THIS CLIMATE</b>
+    <ul id="list"></ul>
+</div>
+
+
+    <div>
+     
+       
+    </div>
+    
+</div>
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <img src="c:\Users\Mukil\Downloads\png-transparent-computer-icons-red-alert-angle-text-triangle-thumbnail-removebg-preview.png" class="image">
+        <span class="close-btn">&times;</span>
+        <h2 id="alert"></h2>
+        <h3 id="cautions"></h3>
+    </div>
+</div>
+
+    </center>
+    <script src="weather dashboard.js"></script>
+<script>
+
+const time = new Date().getHours();
+if (time >= 6 && time < 16) {
+    document.body.style.backgroundImage = 'url("c:/Users/Mukil/Downloads/noon sky (2) (2).jpg")';
+} else if (time >= 16 && time < 19) {
+    document.body.style.backgroundImage = 'url("c:/Users/Mukil/Downloads/depositphotos_582319764-stock-photo-summer-evening-stormy-sky (1).jpg")';
+} else {
+    document.body.style.backgroundImage = 'url("c:/Users/Mukil/Downloads/pexels-pixabay-414727 (1).jpg")';
+}
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    const params = new URLSearchParams(window.location.search);
+    const encodedCityName = params.get('city');
+    
+    if (encodedCityName) {
+        const cityName = decodeURIComponent(encodedCityName);
+        
+        fetchCity(cityName); // Assuming fetchWeatherData is defined elsewhere
+        fetchWeather(cityName);
+        speakMessage()
+    } else {
+        console.error('City name not found in URL parameters.');
+    }
+});
+
+
+
+document.querySelector('.dropdown-toggle1').addEventListener('click', function(event) {
+    event.preventDefault();
+    document.querySelector('.dropdown-menu1').classList.toggle('show');
+});
+window.onclick = function(event) {
+    if (!event.target.matches('.dropdown-toggle1') && !event.target.closest('.dropdown-menu1')) {
+        var dropdowns = document.getElementsByClassName("dropdown-menu1");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+window.onload = function() {
+    const storedEmail = localStorage.getItem('email');
+    if (storedEmail) {
+        document.getElementById('gmail-input').value = storedEmail;
+        document.getElementById('email-alerts').classList.add('subscribed');
+    }
+}
+window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const encodedCityName = urlParams.get('city');
+    if (encodedCityName) {
+    const decodedCityName = decodeURIComponent(encodedCityName);
+    var currentCityInput = document.getElementById('current-city');
+currentCityInput.value = encodedCityName;
+currentCityInput.disabled = true;
+
+    fetchCity(decodedCityName);
+    speakMessage()
+    } else {
+    console.error('City name not found in URL parameters.');
+    
+    }
+    }
+    
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const params = new URLSearchParams(window.location.search);
+        const encodedCityName = params.get('city');
+        if (encodedCityName) {
+            const cityName = decodeURIComponent(encodedCityName);
+          
+            fetchWeatherData(cityName);
+            speakMessage()
+        } else {
+            console.error('City name not found in URL parameters.');
+        }
+    });
+async function fetchCityFromSearch() {
+    const cityInput = document.getElementById('city-input');
+    const cityName = cityInput.value.trim();
+
+    if (!cityName) {
+        showNotification("Please enter a city name.", 'error');
+        return;
+    }
+
+    try {
+      
+        fetchCity(cityName)
+      
+    } catch (error) {
+        showNotification(`Error fetching weather data: ${error.message}`, 'error');
+    }
+}
+
+
+    function startVoiceRecognition(inputId) {
+        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.interimResults = true;
+    
+            recognition.onresult = function(event) {
+                const last = event.results.length - 1;
+                let command = event.results[last][0].transcript.trim();
+                if (command.endsWith(".")) {
+                    command = command.slice(0, -1);
+                }
+                document.getElementById(city-input).value = command;
+                fetchCity(command);
+                fetchWeather(command);
+                speakMessage()
+            };
+    
+            recognition.start();
+        } else {
+            alert('Speech recognition is not supported in your browser. Please use Chrome or Edge.');
+        }
+    }
+    
+const openWeatherMapApiKey = '36b3e04a424745f6b12a3bcf00e54769';
+const timeZoneDBAPIKey = 'XB6EHS2NKPG6';
+const weatherApiKey = 'f49b75258d944d88815113325242505';
+
+
+
+
+let timeZoneOffset;
+
+        async function getCoordinates(city) {
+            const response = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${openWeatherMapApiKey}`);
+            if (!response.ok) {
+                return null;
+            }
+            const data = await response.json();
+            if (data.length === 0) {
+                return null;
+            }
+            return { lat: data[0].lat, lon: data[0].lon };
+        }
+
+        async function getTimeZone(lat, lon) {
+            const response = await fetch(`https://api.timezonedb.com/v2.1/get-time-zone?key=${timeZoneDBAPIKey}&format=json&by=position&lat=${lat}&lng=${lon}`);
+            if (!response.ok) {
+                return null;
+            }
+            const data = await response.json();
+            if (data.status !== 'OK') {
+                return null;
+            }
+            return data.gmtOffset;
+        }
+
+        function formatDate(date) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function updateTime() {
+            if (timeZoneOffset === undefined) {
+                return;
+            }
+            const now = new Date();
+            const localTime = new Date(now.getTime() + now.getTimezoneOffset() * 60000 + timeZoneOffset * 1000);
+            var TIME = document.getElementById('time');
+            TIME.innerText = localTime.toLocaleTimeString();
+            var DATE = document.getElementById('date');
+            DATE.innerText = formatDate(localTime);
+        }
+
+        async function startUpdatingTime(city) {
+            try {
+                const coordinates = await getCoordinates(city);
+                if (!coordinates) {
+                    throw new Error(`Could not find coordinates for ${city}.`);
+                }
+
+                const offset = await getTimeZone(coordinates.lat, coordinates.lon);
+                if (offset === null) {
+                    throw new Error(`Could not find time zone for ${city}.`);
+                }
+
+                timeZoneOffset = offset;
+
+                updateTime();
+                setInterval(updateTime, 1000);
+            } catch (error) {
+                console.error('An error occurred:', error);
+            }
+        }
+
+        function redirectToHourlyPage() {
+            var cityInput = document.getElementById('city-input');
+            
+            if (cityInput) {
+                var cityName = cityInput.value.trim();
+        
+                if (cityName) {
+                    var encodedCityName = encodeURIComponent(cityName);
+                    var url = `HOURLY.html?city=${encodedCityName}`;
+                    window.location.href = url;
+                    return false;
+                } else {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const encodedCityName = urlParams.get('city');
+        
+                    if (encodedCityName) {
+                        var url = `HOURLY.html?city=${encodedCityName}`;
+                        window.location.href = url;
+                        return false;
+                    } else {
+                        alert('Please enter a city name.');
+                        return false;
+                    }
+                }
+            } else {
+                alert('City input field not found.');
+                return false;
+            }
+        }
+        
+
+        function goBack11() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'air.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack12() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'marine.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack14() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'pastweather.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack15() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'map.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack144() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'major.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack19() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'Daily.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const recommendationCheckbox = document.getElementById('recommendation-checkbox');
+            const recommendationDiv = document.getElementById('recommendation');
+        
+            function initializeRecommendationCheckbox() {
+                const recommendationPref = localStorage.getItem('recommendationPref');
+                if (recommendationPref === 'true') {
+                    recommendationCheckbox.checked = true;
+                    recommendationDiv.style.display = 'block';
+                } else {
+                    recommendationCheckbox.checked = false;
+                    recommendationDiv.style.display = 'none';
+                }
+            }
+        
+            initializeRecommendationCheckbox();
+        
+            recommendationCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    recommendationDiv.style.display = 'block';
+                    localStorage.setItem('recommendationPref', 'true');
+                } else {
+                    recommendationDiv.style.display = 'none';
+                    localStorage.setItem('recommendationPref', 'false');
+                }
+            });
+        });
+   
+
+var popupTimeout;
+var popupsEnabled = true; // Start with popups disabled
+
+// Check local storage for saved value on page load
+var savedValue = localStorage.getItem('popupsEnabled');
+if (savedValue !== null) {
+    popupsEnabled = JSON.parse(savedValue);
+    document.getElementById('descrp').checked = popupsEnabled;
+    togglePopups(popupsEnabled); // Update popups display based on saved value
+}
+
+document.getElementById('descrp').addEventListener('change', function() {
+    popupsEnabled = this.checked; // Toggle popupsEnabled based on checkbox state
+    localStorage.setItem('popupsEnabled', popupsEnabled); // Save value to local storage
+    togglePopups(popupsEnabled); // Update popups display
+});
+
+function togglePopups(enabled) {
+    var popups = document.querySelectorAll('.popup12');
+    popups.forEach(function(popup) {
+        if (enabled) {
+            popup.style.display = 'none';
+        } else {
+            popup.style.display = 'none';
+        }
+    });
+}
+
+function showPopup(popupId) {
+    if (!popupsEnabled) return;
+
+    var popup = document.getElementById(popupId);
+    clearTimeout(popupTimeout);
+
+    var spanRect = document.querySelector('.clickable-text').getBoundingClientRect();
+    var popupWidth = popup.offsetWidth;
+
+    popup.style.top = (spanRect.top + (spanRect.height / 2)) + 'px';
+    popup.style.left = (spanRect.left - popupWidth - 10) + 'px'; // Adjust 10px for spacing
+
+    popup.style.display = 'block';
+    popup.classList.add('fade-in');
+}
+
+function hidePopup(popupId) {
+    var popup = document.getElementById(popupId);
+    popup.classList.remove('fade-in');
+
+    popupTimeout = setTimeout(function() {
+        popup.style.display = 'none';
+    }, 100);
+}
+document.getElementById('trigger-text').addEventListener('mouseenter', function(event) {
+    var popup = document.getElementById('popup123');
+    var rect = event.target.getBoundingClientRect();
+    popup.style.top = rect.top + 'px';
+    popup.style.left = rect.right + 'px';
+    popup.style.display = 'block';
+});
+
+document.getElementById('trigger-text').addEventListener('mouseleave', function() {
+    var popup = document.getElementById('popup123');
+    popup.style.display = 'none';
+});
+
+
+
+
+
+
+
+
+function showNotification(message, type = 'error') {
+    const notification = document.getElementById("notification");
+    const notificationMessage = document.getElementById("notificationMessage");
+    notificationMessage.innerHTML = message;
+    notification.className = `notification ${type}`;
+    notification.style.display = 'block';
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 3000);
+}
+
+
+window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const encodedCityName = urlParams.get('city');
+    if (encodedCityName) {
+        const cityName = decodeURIComponent(encodedCityName);
+        document.getElementById('cityName').innerText = `Weather data for ${cityName}`;
+
+        // Fetch weather data based on the city name
+        fetchCity(cityName);
+        speakMessage()
+    } else {
+        console.error('City parameter not found in URL');
+    }
+};
+    
+
+let updateInterval;
+
+
+ function startVoiceRecognition(inputId) {
+   
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.interimResults = true;
+
+       
+        recognition.onresult = function(event) {
+            const last = event.results.length - 1;
+            let command = event.results[last][0].transcript.trim();
+            if (command.endsWith(".")) {
+                command = command.slice(0, -1);
+            }
+            document.getElementById('city-input').value = command;
+            fetchCity(command);
+        };
+
+      
+        recognition.start();
+    } else {
+       
+        alert('Speech recognition is not supported in your browser. Please use Chrome or Edge.');
+    }
+}
+
+        async function fetchAstronomyData(city) {
+            const url = `http://api.weatherapi.com/v1/astronomy.json?key=${weatherApiKey}&q=${city}&dt=${new Date().toISOString().split('T')[0]}`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+
+                const data = await response.json();
+                updateUI(data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        function updateUI(astronomyData) {
+            if (astronomyData) {
+                document.getElementById('sunrise').textContent = astronomyData.astronomy.astro.sunrise;
+                document.getElementById('sunset').textContent = astronomyData.astronomy.astro.sunset;
+                document.getElementById('moonrise').textContent = astronomyData.astronomy.astro.moonrise;
+                document.getElementById('moonset').textContent = astronomyData.astronomy.astro.moonset;
+                document.getElementById('moonphase').textContent = astronomyData.astronomy.astro.moon_phase;
+                const moonphase = astronomyData.astronomy.astro.moon_phase;
+                const moon = document.getElementById('moon-image');
+
+                switch (moonphase) {
+                    case "Waxing Crescent":
+                        moon.src = "c:/Users/Mukil/Downloads/waxing-crescent-moon-emoji-clipart-xl-removebg-preview.png";
+                        break;
+                    case "Last Quarter":
+                    case "Waning Half Moon":
+                        moon.src = "c:/Users/Mukil/Downloads/third_quater-removebg-preview.png";
+                        break;
+                    case "Waning Gibbous":
+                        moon.src = "c:/Users/Mukil/Downloads/WANING_GIBBOUS-removebg-preview.png";
+                        break;
+                    case "Full Moon":
+                        moon.src = "c:/Users/Mukil/Downloads/FULL_MOON-removebg-preview.png";
+                        break;
+                    case "Waxing Gibbous":
+                        moon.src = "c:/Users/Mukil/Downloads/waxing_gibbous-removebg-preview.png";
+                        break;
+                    case "First Quarter":
+                        moon.src = "c:/Users/Mukil/Downloads/first_quater-removebg-preview.png";
+                        break;
+                    default:
+                        moon.src = "c:/Users/Mukil/Downloads/moon-phases-explained__2_-removebg-preview.png";
+                        break;
+                }
+              
+            }
+            const messageText2 = `
+
+
+            Here are the current astronomical details for ${data.name}:
+            
+            - Sunrise: ${astronomyData.astronomy.astro.sunrise}
+            - Sunset: ${astronomyData.astronomy.astro.sunset}
+            - Moonrise: ${astronomyData.astronomy.astro.moonrise}
+            - Moonset: ${astronomyData.astronomy.astro.moonset}
+            - Moon Phase: ${astronomyData.astronomy.astro.moon_phase}
+            `;
+            
+
+        }
+        async function fetchCity(city) {
+            startUpdatingTime(city);
+
+            const URL = 'https://api.openweathermap.org/data/2.5/weather';
+            const Full_url = `${URL}?q=${city}&appid=${openWeatherMapApiKey}&units=metric`;
+            try {
+                const response = await fetch(Full_url);
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error('City not found');
+                    } else {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                }
+
+                const data = await response.json();
+                document.getElementById('loc').innerText = data.name;
+                document.getElementById('temp1').innerText = data.main.temp + "°C";
+                document.getElementById('temp7').innerText = data.visibility + " ";
+                document.getElementById('temp6').innerText = data.main.humidity + "%";
+                document.getElementById('temp2').innerText = data.wind.speed + " m/s";
+                document.getElementById('temp3').innerText = data.main.pressure + " hPa";
+                document.getElementById('temp4').innerText = data.clouds.all + "%";
+                document.getElementById('temp5').innerText = data.weather[0].main;
+                document.getElementById('min').innerText = data.main.temp_min + "°C";
+                document.getElementById('max').innerText = data.main.temp_max + "°C";
+                document.getElementById('feel').innerText = data.main.feels_like + "°C";
+
+                const icon = data.weather[0].icon;
+                const iconUrl = `http://openweathermap.org/img/wn/${icon}.png`;
+                document.getElementById('weather-icon').src = iconUrl;
+                document.getElementById('cel56').innerText = toFahrenheit(data.main.temp).toFixed(2) + "°F";
+                document.getElementById('min20').innerText = toFahrenheit(data.main.temp_min).toFixed(2) + "°F";
+                document.getElementById('min21').innerText = toFahrenheit(data.main.temp_max).toFixed(2) + "°F";
+                document.getElementById('min22').innerText = toFahrenheit(data.main.feels_like).toFixed(2) + "°F";
+             
+                fetchAstronomyData(city);
+
+const weatherCondition = data.weather[0].main.toLowerCase();
+const currentTime = new Date().getHours();
+const temperatureValue = data.main.temp;
+document.getElementById('cel1').innerText = toKph(data.wind.speed).toFixed(2) + " km/h";
+
+const messageText = `
+  Dear User,
+
+  Current location: ${data.name}. 
+  The prevailing weather condition is ${data.weather[0].main}.
+  The temperature is ${data.main.temp} degrees Celsius, equivalent to ${toFahrenheit(data.main.temp).toFixed(2)} degrees Fahrenheit. 
+  The minimum temperature observed is ${data.main.temp_min} degrees Celsius, or ${toFahrenheit(data.main.temp_min).toFixed(2)} degrees Fahrenheit. 
+  The maximum temperature recorded is ${data.main.temp_max} degrees Celsius, which is ${toFahrenheit(data.main.temp_max).toFixed(2)} degrees Fahrenheit. 
+  It feels like ${data.main.feels_like} degrees Celsius, or ${toFahrenheit(data.main.feels_like).toFixed(2)} degrees Fahrenheit. 
+  The humidity level is at ${data.main.humidity} percent. 
+  Visibility extends to ${data.visibility} meters. 
+  Wind speed is recorded at ${data.wind.speed} meters per second. 
+  Atmospheric pressure stands at ${data.main.pressure} hectopascals. 
+  Cloud cover is currently at ${data.clouds.all} percent. 
+
+
+
+  This is the current weather forecast.
+
+  Your Weather Assistant
+`;
+const message = new SpeechSynthesisUtterance(messageText);
+
+
+function toKph(windSpeedMps) {
+    return windSpeedMps * 3.6;
+}
+    
+function toFahrenheit(celsius) {
+    return (celsius * 9 / 5) + 32;
+}
+
+
+function toCelsius(fahrenheit) {
+    return (fahrenheit - 32) * 5 / 9;
+}
+ 
+  function showCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "block";
+}
+
+
+function closeCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "none";
+}
+
+const F = toFahrenheit(temperatureValue).toFixed(2);
+
+
+const C = temperatureValue;
+
+
+if ((C >= 30 && C <= 40) || (F >= 90 && F <= 104)) {
+    showCityInputPopup();
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    alert.textContent = "Heat Advisory Alert";
+    pre.innerHTML = `
+    <ul>
+        <li>Stay Hydrated: Drink plenty of fluids, especially water. Avoid drinks with caffeine or alcohol.</li>
+        <li>Stay Indoors: Stay in air-conditioned buildings as much as possible. If your home does not have air conditioning, consider spending time in public places that do, such as shopping malls or libraries.</li>
+        <li>Limit Outdoor Activities: Avoid strenuous activities, especially during the hottest parts of the day.</li>
+        <li>Wear Appropriate Clothing: Light-weight, light-colored, and loose-fitting clothing can help keep you cool.</li>
+        <li>Check on Vulnerable Individuals: Elderly people, young children, and those with chronic illnesses are particularly vulnerable to heat. Check on friends, family, and neighbors who may need assistance.</li>
+    </ul>`;
+    function showCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "block";
+    }
+    function closeCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "none";
+    }
+    document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup);
+    
+}
+ else if((C >= 41 && C <= 43) || (F >= 104 && F <= 110)) {
+    showCityInputPopup();
+    
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "Excessive Heat Warning ";
+    pre.innerHTML = `
+    <ul>
+        <li>Stay Hydrated: Drink plenty of water, even if you do not feel thirsty.</li>
+        <li>Cool Down: Take cool showers or baths to lower your body temperature. Use damp cloths or ice packs on your neck, wrists, and ankles to cool down quickly.</li>
+        <li>Eat Light: Consume smaller, lighter meals more frequently throughout the day. Avoid heavy, hot foods as they can increase your body temperature.</li>
+        <li>Use Fans and Ventilation: While air conditioning is the best way to cool off, fans can also help circulate air in the absence of AC. Use window reflectors and cover windows with drapes or shades to block out the sun.</li>
+        <li>Use Sunscreen: Protect your skin from sunburn by applying a broad-spectrum sunscreen with an SPF of at least 30. Reapply every two hours and after swimming or sweating.</li>
+    </ul>`;
+    
+function showCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "block";
+}
+function closeCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "none";
+}
+document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup);        ``                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+}
+else if((C >= 43 && C <= 50) || (F >= 110 && F <= 120)){  showCityInputPopup();
+    
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "Heat Emergency";
+    pre.innerHTML = `
+    <ul>
+    <li><strong>Limit Physical Activity:</strong> Avoid strenuous activities that can increase your body temperature. If you exercise, do so early in the morning or late in the evening when it’s cooler.</li>
+    <li><strong>Stay Informed:</strong> Keep updated on the latest weather forecasts and heat alerts from local authorities. Follow their advice and warnings.</li>
+    <li><strong>Use Cooling Centers:</strong> If your home does not have air conditioning, spend time in public places that are air-conditioned, such as malls, libraries, or community cooling centers.</li>
+    <li><strong>Keep Pets Safe:</strong> Ensure pets have plenty of fresh water and shade. Never leave them in a parked vehicle, as temperatures inside can quickly become lethal.</li>
+    <li><strong>Avoid Sunburn:</strong> In addition to sunscreen, wear sunglasses and seek shade whenever possible to protect your skin from harmful UV rays.</li
+    </ul>`;
+    
+function showCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "block";
+}
+function closeCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "none";
+}
+document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup);        ``                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+}
+    if(weatherCondition === "thunderstorm")
+    {
+     
+    showCityInputPopup();
+    
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "Thunderstorm Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay Informed: Keep an eye on weather forecasts and alerts.Check for provide real-time updates on thunderstorms in your area.</li>
+    <li>Indoor Safety: If you're indoors during a thunderstorm, stay away from windows and doors. Lightning can strike through glass, so it's best to stay in the interior rooms of your home.</li>
+    <li>Outdoor Safety: If you're outside, seek shelter immediately. Avoid tall objects such as trees or open fields, and never take shelter under isolated trees.</li>
+   
+    <li>Unplug Electronics: To prevent damage from power surges caused by lightning strikes, unplug electronic devices and appliances.</li>
+    <li>Emergency Kit: Have an emergency kit ready with essentials such as water, non-perishable food, a flashlight, batteries, a first aid kit, and any necessary medications.</li>
+  
+    </ul>`;
+    
+function showCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "block";
+}
+function closeCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "none";
+}
+document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup); 
+    }
+else if(weatherCondition === "thunderstorm with rain" )
+{
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "Thunderstorm Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay Informed: Keep an eye on weather forecasts and alerts.Check for provide real-time updates on thunderstorms in your area.</li>
+    <li>Indoor Safety: If you're indoors during a thunderstorm, stay away from windows and doors. Lightning can strike through glass, so it's best to stay in the interior rooms of your home.</li>
+    <li>Outdoor Safety: If you're outside, seek shelter immediately. Avoid tall objects such as trees or open fields, and never take shelter under isolated trees.</li>
+   
+    <li>Unplug Electronics: To prevent damage from power surges caused by lightning strikes, unplug electronic devices and appliances.</li>
+    <li>Emergency Kit: Have an emergency kit ready with essentials such as water, non-perishable food, a flashlight, batteries, a first aid kit, and any necessary medications.</li>
+  
+    </ul>`;
+    
+function showCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "block";
+}
+function closeCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "none";
+}
+document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup); 
+}
+else if (weatherCondition === "thunderstorm with light rain"){
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "Thunderstorm Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay Informed: Keep an eye on weather forecasts and alerts.Check for provide real-time updates on thunderstorms in your area.</li>
+    <li>Indoor Safety: If you're indoors during a thunderstorm, stay away from windows and doors. Lightning can strike through glass, so it's best to stay in the interior rooms of your home.</li>
+    <li>Outdoor Safety: If you're outside, seek shelter immediately. Avoid tall objects such as trees or open fields, and never take shelter under isolated trees.</li>
+   
+    <li>Unplug Electronics: To prevent damage from power surges caused by lightning strikes, unplug electronic devices and appliances.</li>
+    <li>Emergency Kit: Have an emergency kit ready with essentials such as water, non-perishable food, a flashlight, batteries, a first aid kit, and any necessary medications.</li>
+  
+    </ul>`;
+    
+function showCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "block";
+}
+function closeCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "none";
+}
+document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup); 
+}
+else if (weatherCondition === "thunderstorm with heavy rain"){
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "Thunderstorm with heavy rain Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay Informed: Keep an eye on weather forecasts and alerts.Check for provide real-time updates on thunderstorms in your area.</li>
+    <li>Indoor Safety: If you're indoors during a thunderstorm, stay away from windows and doors. Lightning can strike through glass, so it's best to stay in the interior rooms of your home.</li>
+    <li>Outdoor Safety: If you're outside, seek shelter immediately. Avoid tall objects such as trees or open fields, and never take shelter under isolated trees.</li>
+   
+    <li>Unplug Electronics: To prevent damage from power surges caused by lightning strikes, unplug electronic devices and appliances.</li>
+    <li>Emergency Kit: Have an emergency kit ready with essentials such as water, non-perishable food, a flashlight, batteries, a first aid kit, and any necessary medications.</li>
+  
+    </ul>`;
+    
+function showCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "block";
+}
+function closeCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "none";
+}
+document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup); 
+}
+else if(weatherCondition === "light thunderstorm"){
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "Thunderstorm Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay Informed: Keep an eye on weather forecasts and alerts.Check for provide real-time updates on thunderstorms in your area.</li>
+    <li>Indoor Safety: If you're indoors during a thunderstorm, stay away from windows and doors. Lightning can strike through glass, so it's best to stay in the interior rooms of your home.</li>
+    <li>Outdoor Safety: If you're outside, seek shelter immediately. Avoid tall objects such as trees or open fields, and never take shelter under isolated trees.</li>
+   
+    <li>Unplug Electronics: To prevent damage from power surges caused by lightning strikes, unplug electronic devices and appliances.</li>
+    <li>Emergency Kit: Have an emergency kit ready with essentials such as water, non-perishable food, a flashlight, batteries, a first aid kit, and any necessary medications.</li>
+  
+    </ul>`;
+    
+function showCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "block";
+}
+function closeCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "none";
+}
+document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup); 
+}
+else if(weatherCondition === "ragged thunderstorm"){
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = " Ragged Thunderstorm Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay Informed: Keep an eye on weather forecasts and alerts.Check for provide real-time updates on thunderstorms in your area.</li>
+    <li>Indoor Safety: If you're indoors during a thunderstorm, stay away from windows and doors. Lightning can strike through glass, so it's best to stay in the interior rooms of your home.</li>
+    <li>Outdoor Safety: If you're outside, seek shelter immediately. Avoid tall objects such as trees or open fields, and never take shelter under isolated trees.</li>
+   
+    <li>Unplug Electronics: To prevent damage from power surges caused by lightning strikes, unplug electronic devices and appliances.</li>
+    <li>Emergency Kit: Have an emergency kit ready with essentials such as water, non-perishable food, a flashlight, batteries, a first aid kit, and any necessary medications.</li>
+  
+    </ul>`;
+    
+function showCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "block";
+}
+function closeCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "none";
+}
+document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup); 
+    }
+  else if ( weatherCondition === "thunderstorm with light drizzle"){
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "Thunderstorm Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay Informed: Keep an eye on weather forecasts and alerts.Check for provide real-time updates on thunderstorms in your area.</li>
+    <li>Indoor Safety: If you're indoors during a thunderstorm, stay away from windows and doors. Lightning can strike through glass, so it's best to stay in the interior rooms of your home.</li>
+    <li>Outdoor Safety: If you're outside, seek shelter immediately. Avoid tall objects such as trees or open fields, and never take shelter under isolated trees.</li>
+   
+    <li>Unplug Electronics: To prevent damage from power surges caused by lightning strikes, unplug electronic devices and appliances.</li>
+    <li>Emergency Kit: Have an emergency kit ready with essentials such as water, non-perishable food, a flashlight, batteries, a first aid kit, and any necessary medications.</li>
+  
+    </ul>`;
+    
+function showCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "block";
+}
+function closeCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "none";
+}
+document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup); 
+  }
+   else if (weatherCondition === "thunderstorm with drizzle") {
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "Thunderstorm Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay Informed: Keep an eye on weather forecasts and alerts.Check for provide real-time updates on thunderstorms in your area.</li>
+    <li>Indoor Safety: If you're indoors during a thunderstorm, stay away from windows and doors. Lightning can strike through glass, so it's best to stay in the interior rooms of your home.</li>
+    <li>Outdoor Safety: If you're outside, seek shelter immediately. Avoid tall objects such as trees or open fields, and never take shelter under isolated trees.</li>
+   
+    <li>Unplug Electronics: To prevent damage from power surges caused by lightning strikes, unplug electronic devices and appliances.</li>
+    <li>Emergency Kit: Have an emergency kit ready with essentials such as water, non-perishable food, a flashlight, batteries, a first aid kit, and any necessary medications.</li>
+  
+    </ul>`;
+    
+function showCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "block";
+}
+function closeCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "none";
+}
+document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup); 
+   } 
+   else if  (weatherCondition === "thunderstorm with heavy drizzle"){
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "Thunderstorm with heavy drizzle Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay Informed: Keep an eye on weather forecasts and alerts.Check for provide real-time updates on thunderstorms in your area.</li>
+    <li>Indoor Safety: If you're indoors during a thunderstorm, stay away from windows and doors. Lightning can strike through glass, so it's best to stay in the interior rooms of your home.</li>
+    <li>Outdoor Safety: If you're outside, seek shelter immediately. Avoid tall objects such as trees or open fields, and never take shelter under isolated trees.</li>
+   
+    <li>Unplug Electronics: To prevent damage from power surges caused by lightning strikes, unplug electronic devices and appliances.</li>
+    <li>Emergency Kit: Have an emergency kit ready with essentials such as water, non-perishable food, a flashlight, batteries, a first aid kit, and any necessary medications.</li>
+  
+    </ul>`;
+    
+function showCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "block";
+}
+function closeCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "none";
+}
+document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup); 
+   }
+else if (weatherCondition === "heavy intensity rain") {
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "Thunderstorm with heavy drizzle Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay informed about weather forecasts and updates through reliable sources.</li>
+    <li>Avoid unnecessary outdoor activities and stay indoors until the heavy rain subsides.</li>
+     <li>Use appropriate rain gear such as waterproof jackets and boots if you must go outside.</li>
+     <li>Stay away from low-lying areas, rivers, and streams prone to flooding.</li>
+     <li>Have an emergency kit ready with essentials such as water, non-perishable food, flashlights, batteries, a first aid kit, and necessary medications.</li>
+    
+    </ul>`;
+    
+function showCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "block";
+}
+function closeCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "none";
+}
+document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup); 
+   }
+   else if (weatherCondition === "extreme rain") {
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "Extreme Rain Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay informed about weather forecasts and updates through reliable sources.</li>
+    <li>Avoid unnecessary outdoor activities and stay indoors until the heavy rain subsides.</li>
+    <li>Use appropriate rain gear such as waterproof jackets and boots if you must go outside.</li>
+    <li>Stay away from low-lying areas, rivers, and streams prone to flooding.</li>
+    <li>Have an emergency kit ready with essentials such as water, non-perishable food, flashlights, batteries, a first aid kit, and necessary medications.</li>
+    </ul>`;
+    
+    function showCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "block";
+    }
+    
+    function closeCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "none";
+    }
+    
+    document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup);
+    
+   }
+   else if (weatherCondition === "freezing rain"){
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "Freezing Rain Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay informed about weather forecasts and updates through reliable sources.</li>
+    <li>Avoid unnecessary outdoor activities and stay indoors until the heavy rain subsides.</li>
+    <li>Use appropriate rain gear such as waterproof jackets and boots if you must go outside.</li>
+    <li>Stay away from low-lying areas, rivers, and streams prone to flooding.</li>
+    <li>Have an emergency kit ready with essentials such as water, non-perishable food, flashlights, batteries, a first aid kit, and necessary medications.</li>
+    </ul>`;
+    
+    function showCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "block";
+    }
+    
+    function closeCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "none";
+    }
+    
+    document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup);
+    
+   }    
+   else if (weatherCondition === "heavy intensity shower rain"){
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "heavy intensity shower rain Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay informed about weather forecasts and updates through reliable sources.</li>
+    <li>Avoid unnecessary outdoor activities and stay indoors until the heavy rain subsides.</li>
+    <li>Use appropriate rain gear such as waterproof jackets and boots if you must go outside.</li>
+    <li>Stay away from low-lying areas, rivers, and streams prone to flooding.</li>
+    <li>Have an emergency kit ready with essentials such as water, non-perishable food, flashlights, batteries, a first aid kit, and necessary medications.</li>
+    </ul>`;
+    
+    function showCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "block";
+    }
+    
+    function closeCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "none";
+    }
+    
+    document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup);
+    
+   }    
+
+else if (weatherCondition === "ragged shower rain"){
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "ragged shower rain Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay informed about weather forecasts and updates through reliable sources.</li>
+    <li>Avoid unnecessary outdoor activities and stay indoors until the heavy rain subsides.</li>
+    <li>Use appropriate rain gear such as waterproof jackets and boots if you must go outside.</li>
+    <li>Stay away from low-lying areas, rivers, and streams prone to flooding.</li>
+    <li>Have an emergency kit ready with essentials such as water, non-perishable food, flashlights, batteries, a first aid kit, and necessary medications.</li>
+    </ul>`;
+    
+    function showCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "block";
+    }
+    
+    function closeCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "none";
+    }
+    
+    document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup);
+    
+   }    
+   else if(weatherCondition ==="heavy snow"){
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "heavy snow Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay informed about weather forecasts and updates through reliable sources.</li>
+    <li>Dress Appropriately: When venturing outside, wear warm clothing, including insulated jackets, gloves, hats, scarves, and waterproof boots. Layering is essential to retain body heat. </li>
+    <li>Drive carefully and slowly on snow-covered roads. Allow extra time for travel and maintain a safe distance from other vehicle</li>
+    <li>Watch for signs of frostbite and hypothermia</li>
+    <li>Set your thermostat to the same temperature during the day and at night.
+    </li>
+    </ul>`;
+    
+    function showCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "block";
+    }
+    
+    function closeCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "none";
+    }
+    
+    document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup);
+   }
+   else if(weatherCondition ==="heavy shower snow"){
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "heavy shower snow Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay informed about weather forecasts and updates through reliable sources.</li>
+    <li>Dress Appropriately: When venturing outside, wear warm clothing, including insulated jackets, gloves, hats, scarves, and waterproof boots. Layering is essential to retain body heat. </li>
+    <li>Drive carefully and slowly on snow-covered roads. Allow extra time for travel and maintain a safe distance from other vehicle</li>
+    <li>Watch for signs of frostbite and hypothermia</li>
+    <li>Set your thermostat to the same temperature during the day and at night.
+    </li>
+    </ul>`;
+    
+    function showCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "block";
+    }
+    
+    function closeCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "none";
+    }
+    
+    document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup);
+   }
+   else if (weatherCondition === "mist"){
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "Mist Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Drive Slowly: Reduced visibility due to mist or fog requires slower driving speeds. Allow for longer braking distances and better reflexes</li>
+    <li>Use Fog Lights: Instead of high beam headlights, use fog lights to prevent light rays from rebounding directly back at you, impairing vision. </li>
+    <li>Use Warm A/C: Set your windshield A/C to a warm temperature to clear mist from the windshield.</li>
+    <li>Don’t Drink and Drive: Always prioritize safety and avoid driving under the influence</li>
+    <li>Stay Alert: Foggy conditions require heightened concentration and focus. Avoid driving if you feel sleepy.
+    </li>
+    </ul>`;
+    
+    function showCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "block";
+    }
+    
+    function closeCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "none";
+    }
+    
+    document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup);
+   }
+   else if (weatherCondition === "smoke"){
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "Smoke Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Drive Slowly: Reduced visibility due to smoke or fog requires slower driving speeds. Allow for longer braking distances and better reflexes</li>
+    <li>Use Fog Lights: Instead of high beam headlights, use fog lights to prevent light rays from rebounding directly back at you, impairing vision. </li>
+    <li>Stay Hydrated: Smoke can irritate your respiratory system. Drink plenty of water to stay hydrated and soothe your throa</li>
+    <li>DoAvoid Outdoor Activities: Limit outdoor activities, especially during peak smoke hours. If you need to be outside, wear a mask (N95 or similar) to filter out harmful particles.n’t Drink and Drive: Always prioritize safety and avoid driving under the influence</li>
+    <li>Use Air Purifiers: Consider using air purifiers with HEPA filters to improve indoor air quality. These filters can help remove fine particles from the air.
+    </li>
+    </ul>`;
+    
+    function showCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "block";
+    }
+    
+    function closeCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "none";
+    }
+    
+    document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup);
+    
+   }
+   else if (weatherCondition === "dust whirls"){
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "dust whirls Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay Informed: Be aware of local weather conditions and forecasts. Dust devils are more likely to occur on hot, sunny days.</li>
+    <li>Avoid Direct Exposure: If you see a dust devil forming, keep a safe distance. Avoid walking or driving directly into its path. </li>
+    <li>Secure Loose Objects: Dust devils can pick up loose dirt, debris, and lightweight objects. Secure outdoor items to prevent them from becoming airborne.</li>
+    <li>Protect Your Eyes: If you encounter a dust devil, shield your eyes from blowing dust and debris.</li>
+    <li>Stay Calm: If caught in a dust devil, remain calm. They are usually short-lived and will dissipate quickly
+    </li>
+    </ul>`;
+    
+    function showCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "block";
+    }
+    
+    function closeCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "none";
+    }
+    
+    document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup);
+}
+else if (weatherCondition === "sand"){
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "Sand Strom Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay Indoors: If an SDS is approaching, seek shelter indoors to avoid exposure to blowing sand and dus</li>
+    <liUse Masks or Scarves: Cover your nose and mouth with a mask or scarf to prevent inhaling fine particles. </li>
+    <li>Secure Loose Items: Secure outdoor objects to prevent them from becoming airborne during an SDS</li>
+    <li>Stay Informed: Monitor weather alerts and forecasts to be aware of SDS conditions in your area</li>
+    <li>Stay Hydrated:Carry water with you and remain hydrated. Sandstorms can cause dryness and discomfort, so staying well-hydrated is crucial</li>
+    </ul>`;
+    
+    function showCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "block";
+    }
+    
+    function closeCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "none";
+    }
+    
+    document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup);
+}
+else if (weatherCondition === "volcanic ash"){
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "volcanic ash Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Stay Inside: If possible, remain indoors with windows and doors closed. This helps minimize exposure to ash.</li>
+    <li>Use Masks or Scarves: Cover your nose and mouth with a mask </li>
+    <li>Wear Long-Sleeved Clothing: Cover your skin with long-sleeved shirts and long pants to prevent direct contact with ash.</li>
+    <li>Use Goggles: Protect your eyes by wearing goggles. Ash particles can be abrasive and harmful.</li>
+    <li>Listen to Authorities: Follow advice from local authorities. If ashfall lasts more than a few hours, they may recommend leaving the area</li>
+    </ul>`;
+    
+    function showCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "block";
+    }
+    
+    function closeCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "none";
+    }
+    
+    document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup);
+}
+else if(weatherCondition === "squalla"){
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "Squalla ash Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Prepare an Emergency Kit:Assemble essential items for safety and survival.</li>
+    <li>Secure Your House:Make necessary repairs and secure loose objects.</li>
+    <li>Stay Informed:Listen to weather updates and warnings via radio, TV, or newspapers.</li>
+    <li>Stay Away from Storm-Damaged Areas:Report fallen trees or power lines to the nearest authorities.</li>
+    <li>Listen to Authorities: Follow advice from local authorities. If squalla lasts more than a few hours, they may recommend leaving the area</li>
+    </ul>`;
+    
+    function showCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "block";
+    }
+    
+    function closeCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "none";
+    }
+    
+    document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup);
+}
+else if(weatherCondition === "tornado"){
+    var alert = document.getElementById('alert');
+    var pre = document.getElementById('cautions');
+    
+    alert.textContent = "Tornado Warning";
+    pre.innerHTML = `
+    <ul>
+    <li>Know When to Take Shelter: If you see signs of a tornado, seek shelter immediately.</li>
+    <li>Where to Take Shelter:Go to your basement or an inside room on the lowest floor (without windows).
+    </li>
+    <li>Immediate Action:Be cautious near damaged buildings.</li>
+    <li>Stay Away from Storm-Damaged Areas:Report fallen trees or power lines to the nearest authorities.</li>
+    <li>Listen to Authorities: Follow advice from local authorities.</li>
+    </ul>`;
+    
+    function showCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "block";
+    }
+    
+    function closeCityInputPopup() {
+        const popup = document.getElementById("myModal");
+        popup.style.display = "none";
+    }
+    
+    document.querySelector(".close-btn").addEventListener("click", closeCityInputPopup);
+}
+
+
+
+let backgroundImageURL;
+       
+var foodsForRainyClimate = [
+    "Samosas", "Pakoras (vegetable fritters)", "Bhajiyas (onion fritters)", "Vada pav", "Bhel puri",
+    "Pani puri", "Aloo tikki", "Corn bhel", "Masala peanuts", "Masala papad",
+    "Khichdi", "Dal fry", "Rajma chawal (kidney beans with rice)", "Paneer tikka", "Chicken biryani",
+    "Vegetable pulao", "Palak paneer", "Chicken curry", "Egg curry", "Fish curry",
+    "Vegetable biryani", "Lemon rice", "Tomato rice", "Coconut rice", "Tamarind rice",
+    "Curd rice", "Mushroom rice", "Peas pulao", "Capsicum rice", "Spinach rice",
+    "Tomato soup", "Corn soup", "Vegetable soup", "Lentil soup (dal soup)", "Spinach soup",
+    "Chicken soup", "Mushroom soup", "Hot and sour soup", "Manchow soup", "Rasam",
+    "Vegetable noodles", "Hakka noodles", "Chow mein", "Schezwan noodles", "Pasta in Alfredo sauce",
+    "Pasta in Arrabbiata sauce", "Pasta in Pesto sauce", "Pasta in Marinara sauce", "Egg noodles", "Spaghetti Aglio e Olio",
+    "Veggie sandwich", "Grilled cheese sandwich", "Paneer tikka sandwich", "Chicken sandwich", "Egg sandwich",
+    "Veggie wrap", "Chicken wrap", "Falafel wrap", "Shawarma", "Kathi roll",
+    "Poha", "Upma", "Idli with sambar", "Dosa with chutney", "Uttapam",
+    "Paratha with curd", "Aloo puri", "Bread pakora", "Masala dosa", "Appam with stew",
+    "Jalebi", "Gulab jamun", "Rasgulla", "Gajar ka halwa", "Rasmalai",
+    "Kheer", "Ice cream", "Falooda", "Rabri", "Shahi tukda",
+    "Masala chai", "Ginger tea", "Cutting chai", "Filter coffee", "Herbal tea (kadha)",
+    "Lemon tea", "Hot chocolate", "Badam milk", "Thandai", "Chaas (buttermilk)",
+    "Dabeli", "Ragda pattice", "Pav bhaji", "Aloo chaat", "Kachori",
+    "Mirchi bajji", "Egg roll", "Momos", "Chicken 65", "Kathiawadi dhokla",
+    "Masala dosa", "Idiyappam with curry", "Paniyaram", "Adai with aviyal", "Puttu with kadala curry",
+    "Ven Pongal", "Kothu parotta", "Meen varuval (Fish fry)", "Kuzhi paniyaram", "Veg kothu parotta",
+    "Puri bhaji", "Chole bhature", "Sarson da saag with makki di roti", "Poha", "Aloo paratha",
+    "Chole kulche", "Bisi bele bath", "Mysore masala dosa", "Gujarati thali", "Maharashtrian thali",
+    "Spring rolls", "Cheese balls", "Paneer pakora", "Chicken lollipop", "Fish fingers",
+    "Garlic bread", "Stuffed mushrooms", "Onion rings", "Mozzarella sticks", "Bruschetta",
+    "Caprese salad", "Greek salad", "Caesar salad", "Cobb salad", "Waldorf salad",
+    "Quinoa salad", "Pasta salad", "Fruit salad", "Bean salad", "Coleslaw",
+    "Gazpacho", "Minestrone", "Miso soup", "French onion soup", "Clam chowder",
+    "Potato soup", "Pumpkin soup", "Tom yum soup", "Pho", "Mulligatawny soup",
+    "Borscht", "Chicken tortilla soup", "Matzah ball soup", "Avgolemono soup", "Fish chowder",
+    "Vegetable stew", "Seafood stew", "Chili", "Chicken chili", "Turkey chili",
+    "White bean chili", "Vegetarian chili", "Taco salad", "Burrito bowl", "Nachos",
+    "Quesadilla", "Fajitas", "Chicken fajitas", "Shrimp fajitas", "Vegetarian fajitas",
+    "Tacos", "Chicken tacos", "Fish tacos", "Shrimp tacos", "Vegetarian tacos",
+    "Enchiladas", "Tamales", "Pozole", "Chiles rellenos", "Mole",
+    "Guacamole", "Pico de gallo", "Salsa verde", "Salsa roja", "Ceviche",
+    "Paella", "Gazpacho", "Croquetas", "Tortilla española", "Patatas bravas",
+    "Pulpo a la gallega", "Gambas al ajillo", "Churros", "Flan", "Crema catalana",
+    "Burrata", "Arancini", "Caprese", "Tiramisu",
+    "Panna cotta", "Gelato", "Cannoli", "Focaccia", "Panzanella",
+    "Ratatouille", "Bouillabaisse", "Coq au vin", "Cassoulet",
+    "Quiche Lorraine", "Croque monsieur", "Croque madame", "Soufflé", "Crème brûlée",
+    "Raclette", "Fondue", "Tarte tatin", "Clafoutis", "Galette",
+    "Spätzle", "Kartoffelsalat", "Sauerkraut", "Pretzel", "Black Forest cake", "Strudel", "Stollen",
+    "Paprikash", "Lángos", "Dobos torte", "Kürtőskalács",
+    "Pierogi", "Bigos", "Zapiekanka", "Racuchy", "Paczki",
+    "Ramen", "Sushi", "Sashimi", "Tempura", "Udon",
+    "Soba", "Okonomiyaki", "Takoyaki", "Yakitori",
+    "Katsu curry", "Omurice", "Tamago kake gohan", "Chawanmushi",
+    "Mapo tofu", "Kung pao chicken", "Spring rolls", "Dumplings",
+    "Baozi", "Peking duck", "Hot pot", "Mooncakes",
+    "Bulgogi", "Kimchi", "Bibimbap", "Japchae", "Tteokbokki",
+    "Soondubu jjigae", "Kimbap", "Sundubu jjigae",
+    "Pho", "Banh mi", "Goi cuon", "Bun cha", "Com tam",
+    "Hainanese chicken rice", "Laksa", "Nasi lemak", "Satay",
+    "Tom yum", "Pad Thai", "Green curry", "Massaman curry", "Som tam",
+    "Mango sticky rice", "Khao soi", "Laab", "Nam tok", "Khao man gai",
+    "Biryani", "Butter chicken", "Paneer butter masala", "Tandoori chicken",
+    "Aloo gobi", "Chana masala", "Saag paneer", "Daal makhani", "Naan",
+    "Roti", "Paratha", "Puri", "Lassi", "Chaat",
+    "Dhokla", "Khandvi", "Thepla", "Fafda", "Handvo",
+    "Pav bhaji", "Vada pav", "Misal pav", "Sabudana khichdi", "Poha",
+    "Upma", "Idli", "Dosa", "Uttapam", "Appam",
+    "Puttu", "Kadala curry", "Adai", "Paniyaram", "Kuzhi paniyaram",
+    "Kothu parotta", "Bisi bele bath", "Mysore masala dosa", "Vada", "Sambar",
+    "Rasam", "Avial", "Erissery", "Kaalan", "Olan",
+    "Pulissery", "Kootu curry", "Thoran", "Pachadi", "Payasam",
+    "Gajar halwa", "Rasgulla", "Gulab jamun", "Jalebi", "Kheer",
+    "Rasmalai", "Mishti doi", "Sandesh", "Cham cham", "Pithe",
+    "Shrikhand", "Modak", "Puran poli", "Basundi", "Tilgul",
+    "Seviyan", "Phirni", "Kulfi", "Falooda", "Rabri"
+];
+
+var foodsForCloudyClimate = [
+    "Chicken curry", "Paneer butter masala", "Dal makhani", "Rajma", "Aloo paratha", "Chole bhature", "Butter chicken", "Palak paneer", "Baingan bharta",
+    "Pav bhaji", "Kadhi pakora", "Pulao", "Biryani", "Dosa", "Idli", "Vada", "Sambar", "Rasam",
+    "Tomato soup", "Hot and sour soup", "Manchow soup", "Sweet corn soup", "Minestrone soup", "Broccoli soup", "Pumpkin soup", "Spinach soup",
+    "Garlic bread", "Cheese toast", "Paneer tikka", "Hara bhara kebab", "Aloo tikki", "Veg cutlet", "Chicken tikka", "Fish fry", "Prawn curry",
+    "Masala dosa", "Plain dosa", "Onion dosa", "Rava dosa", "Mysore masala dosa", "Pesarattu", "Benne dosa", "Neer dosa", "Set dosa",
+    "Idli", "Vada", "Pongal", "Bisi bele bath", "Vangi bath", "Puliyogare", "Curd rice", "Lemon rice", "Tomato rice",
+    "Poha", "Upma", "Uttapam", "Appam", "Puttu", "Idiyappam", "Adai", "Kuzhi paniyaram", "Kothu parotta",
+    "Misal pav", "Dabeli", "Ragda pattice", "Pani puri", "Sev puri", "Dahi puri", "Bhel puri", "Chana chaat", "Aloo chaat",
+    "Vegetable sandwich", "Grilled cheese sandwich", "Paneer sandwich", "Chicken sandwich", "Egg sandwich", "Club sandwich", "BLT sandwich",
+    "Falafel", "Shawarma", "Hummus", "Baba ganoush", "Tabbouleh", "Fattoush", "Moutabal", "Dolma", "Kofta",
+    "Tacos", "Burritos", "Quesadillas", "Enchiladas", "Nachos", "Chimichangas", "Fajitas", "Chiles rellenos", "Tamales",
+    "Pizza", "Pasta", "Lasagna", "Risotto", "Gnocchi", "Focaccia", "Bruschetta", "Caprese salad", "Minestrone",
+    "Ratatouille", "Bouillabaisse", "Quiche", "Croissants", "Baguette", "Crepes", "Soufflé", "Ratatouille", "Nicoise salad",
+    "Sushi", "Tempura", "Ramen", "Udon", "Soba", "Teriyaki chicken", "Miso soup", "Onigiri", "Yakitori",
+    "Kimchi", "Bibimbap", "Japchae", "Bulgogi", "Tteokbokki", "Sundubu-jjigae", "Kimchi fried rice", "Korean fried chicken", "Samgyeopsal",
+    "Pad Thai", "Green curry", "Red curry", "Massaman curry", "Tom yum soup", "Som tam", "Mango sticky rice", "Pad see ew", "Khao soi",
+    "Dim sum", "Kung pao chicken", "Sweet and sour pork", "Peking duck", "Fried rice", "Spring rolls", "Dumplings", "Hot pot", "Mapo tofu",
+    "Samosas", "Pakoras", "Bhajiyas", "Vada pav", "Aloo tikki", "Chole", "Paneer tikka", "Kebabs", "Bhel puri",
+    "Kebabs", "Seekh kebabs", "Shami kebabs", "Galouti kebabs", "Haleem", "Nihari", "Keema", "Korma", "Paya",
+    "Gulab jamun", "Jalebi", "Rasgulla", "Rasmalai", "Kheer", "Gajar ka halwa", "Mysore pak", "Kulfi", "Ladoo",
+    "Brownies", "Chocolate chip cookies", "Cheesecake", "Tiramisu", "Panna cotta", "Eclairs", "Macarons", "Baklava", "Churros"
+];
+
+var foodsForClearClimate = [
+    "Adhirasam", "Sambhar Vada", "Pongal", "Mysore Pak", "Pani Puri", "Idiyappam", "Parotta", "Masala Dosa", "Madurai Jigarthanda",
+    "Sattu Maavu", "Chole Bhature", "Ellu Sadam", "Elaneer Payasam", "Poha", "Seepu Seedai", "Coconut Chutney", "Puli Sadam", "Atho", "Paniyaram",
+    "Kozhukattai", "Neer Mor", "Puttu", "Chicken 65", "Meen Kuzhambu", "Ragi Murukku", "Sarsaparilla Drink", "Rava Dosa", "Chettinad Chicken",
+    "Elaneer Juice", "Karuppatti Panagam", "Chakkarai Pongal", "Chukku Kappi", "Peanut Sundal", "Biryani", "Bonda", "Adai", "Chettinad Fish Fry",
+    "Chilli Chaas", "Rose Milkshake", "Aloo Chaat", "Butter Chicken", "Samosa", "Rasam", "Appam", "Kulfi Falooda", "Kadhi Pakora", "Pulissery",
+    "Bhel Puri", "Uttapam", "Vadai", "Idli", "Nellikai Sadam", "Kozhukattai", "Paniyaram", "Aloo Paratha", "Methi Thepla", "Veg Pulao", "Tomato Soup",
+    "Paneer Butter Masala", "Dhokla", "Khaman", "Methi Malai Murg", "Mushroom Matar", "Bhindi Masala", "Baingan Bharta", "Palak Paneer", "Aloo Gobi",
+    "Hara Bhara Kabab", "Paneer Tikka", "Malai Kofta", "Rajma", "Chana Masala", "Gajar Halwa", "Rasgulla", "Gulab Jamun", "Jalebi", "Falooda", "Kheer",
+    "Shahi Tukda", "Motichoor Ladoo", "Moong Dal Halwa", "Imarti", "Rabri", "Basundi", "Peda", "Barfi", "Kalakand", "Mysore Pak", "Balushahi",
+    "Mango Lassi", "Chaas", "Chai", "Masala Chai", "Ginger Tea", "Lemon Tea", "Cucumber Raita", "Boondi Raita", "Fruit Salad", "Sprout Salad",
+    "Chickpea Salad", "Corn Salad", "Aloo Tikki", "Pav Bhaji", "Paneer Bhurji", "Veg Momos", "Spring Rolls", "Veg Fried Rice", "Hakka Noodles",
+    "Chilli Paneer", "Gobhi Manchurian", "Veg Manchurian", "Paneer Pakora", "Bread Pakora", "Bhajiya", "Dahi Puri", "Sev Puri", "Ragda Pattice",
+    "Pav Bhaji", "Dabeli", "Misal Pav", "Vada Pav", "Sabudana Khichdi", "Khandvi", "Puran Poli", "Shrikhand", "Modak", "Ras Malai", "Sandesh",
+    "Kaju Katli", "Soan Papdi", "Boondi Ladoo", "Tilgul", "Methi Muthia", "Patra", "Dal Dhokli", "Undhiyu", "Handvo", "Ghughra", "Sev Tameta",
+    "Methi Na Gota", "Bhakri", "Thepla", "Kachori", "Litti Chokha", "Dal Baati Churma", "Gatte Ki Sabzi", "Ker Sangri", "Mirchi Bada",
+    "Rajasthani Kadhi", "Besan Chilla", "Pesarattu", "Dum Aloo", "Dahi Bhalla", "Aloo Puri", "Kashmiri Pulao", "Rogan Josh", "Yakhni", "Gushtaba",
+    "Nadru Yakhni", "Modur Pulao", "Phirni", "Shufta", "Kahwa", "Sheermal", "Bakarkhani", "Tabak Maaz", "Kebabs", "Tunde Ke Kebab", "Galouti Kebab",
+    "Shami Kebab", "Seekh Kebab", "Nihari", "Haleem", "Bheja Fry", "Pathar Ka Gosht", "Biryani", "Paya Soup", "Dum Ka Murgh", "Bagara Baingan",
+    "Mirchi Ka Salan", "Double Ka Meetha", "Qubani Ka Meetha", "Kaddu Ki Kheer", "Hyderabadi Biryani", "Hyderabadi Haleem", "Ragi Mudde", "Akki Roti",
+    "Bisi Bele Bath", "Mangalore Buns", "Kori Rotti", "Neer Dosa", "Patrode", "Pathrode", "Chitranna", "Obbattu", "Kadubu", "Kosambari", "Rasam",
+    "Saaru", "Huli", "Majjige Huli", "Mosaru Oota", "Pandi Curry", "Kane Rava Fry", "Chicken Ghee Roast", "Kundapura Koli Saaru", "Mysore Masala Dosa",
+    "Maddur Vada", "Udupi Sambar", "Upma", "Ragi Mudde", "Kesari Bath", "Avial", "Olan", "Erissery", "Pachadi", "Thoran", "Kootu", "Kalan", "Pulinkari",
+    "Molagootal", "Sambaram", "Nannari Sherbet", "Jackfruit Chips", "Banana Chips", "Chakka Varuthathu", "Sukhiyan", "Unniyappam", "Pazham Pori",
+    "Ela Ada", "Chatti Pathiri", "Ada Pradhaman", "Palada Payasam", "Chakka Pradhaman", "Parippu Vada", "Kappa Vevichathu", "Fish Moilee", "Meen Muringakka Curry",
+    "Kottu Parotta", "Idiyappam", "Appam", "Kappa Biryani", "Puttu and Kadala Curry", "Pathiri", "Karimeen Pollichathu", "Meen Mappas", "Thalassery Biryani",
+    "Malabar Chicken Curry", "Kozhikode Halwa", "Achappam", "Kuzhalappam", "Mutton Chaps", "Shorshe Ilish", "Chingri Malai Curry", "Kosha Mangsho",
+    "Shukto", "Cholar Dal", "Aloo Posto", "Luchi", "Radha Ballavi", "Ghugni", "Sandesh", "Rasgulla", "Mishti Doi", "Pithe", "Patishapta", "Nolen Gur Payesh",
+    "Mochar Ghonto", "Bhapa Ilish", "Dhokar Dalna", "Cham Cham", "Kheer Kadam", "Pantua", "Langcha", "Joynagarer Moa", "Kolkata Biryani", "Chop", "Puchka",
+    "Jhal Muri", "Guguni", "Puri", "Dalma", "Santula", "Chenna Poda", "Rasabali", "Chingudi Jhola", "Macha Ghanta", "Kanika", "Dahi Baigana", "Gajja",
+    "Poda Pitha", "Enduri Pitha", "Arisa Pitha", "Manda Pitha", "Kakara Pitha", "Nimki", "Khaja", "Malpua", "Aam Panna", "Chenna Jhili", "Kora Khai",
+    "Dal Dhokli", "Sev Usal", "Gujarati Kadhi", "Handvo", "Dabeli", "Bhel Puri", "Bharela Ringana", "Bhindi Sambhariya", "Sev Tameta", "Oondhiya",
+    "Basundi", "Khichu", "Ganthia", "Khakhra", "Fafda", "Jalebi", "Gulab Jamun", "Malai Malpua", "Shrikhand", "Basundi", "Mohanthal", "Sutarfeni"
+];
+
+
+    var foodsForSnowyClimate = [
+        "Hot Chocolate",
+        "Soup",
+        "Kashmiri Pulao",
+        "Dum Aloo",
+        "Gajar Ka Halwa",
+        "Sarson Da Saag",
+        "Makki Ki Roti",
+        "Pinni",
+        "Baingan Bharta",
+        "Aloo Paratha",
+        "Palak Paneer",
+        "Paneer Tikka",
+        "Butter Chicken",
+        "Rogan Josh",
+        "Kadhi Pakora",
+        "Poha",
+        "Aloo Tikki",
+        "Chole Bhature",
+        "Rajma Chawal",
+        "Hakka Noodles",
+        "Gobi Manchurian",
+        "Momos",
+        "Thukpa",
+        "Momo",
+        "Phagshapa",
+        "Khambir",
+        "Tingmo",
+        "Butter Tea",
+        "Gundruk",
+        "Sael Roti",
+        "Sel Roti",
+        "Gundruk Soup",
+        "Kodo Ko Roti",
+        "Pakku",
+        "Wai Wai",
+        "Kwati",
+        "Khir",
+        "Kheer",
+        "Kulfi",
+        "Jalebi",
+        "Pani Puri",
+        "Bhel Puri",
+        "Samosa",
+        "Aloo Chaat",
+        "Dabeli",
+        "Mirchi Bajji",
+        "Pav Bhaji",
+        "Vada Pav",
+        "Bhutta (Roasted Corn)",
+        "Dhokla",
+        "Khaman",
+        "Fafda",
+        "Thepla",
+        "Khandvi",
+        "Chakli",
+        "Sukhdi",
+        "Gulab Jamun",
+        "Rasgulla",
+        "Jalebi",
+        "Peda",
+        "Kaju Katli",
+        "Ladoo",
+        "Modak",
+        "Gujiya",
+        "Barfi",
+        "Sandesh",
+        "Malai Chop",
+        "Kalakand",
+        "Filter Coffee",
+        "Buttermilk",
+        "Tender Coconut Water",
+        "Jigarthanda",
+        "Paanagam",
+        "Sambaram",
+        "Sugarcane Juice",
+        "Palm Fruit Drink (Nungu)",
+        "Palm Jaggery Coffee (Karupatti Coffee)",
+        "Sarsaparilla Drink (Nannari Sherbet)",
+        "Neer Mor",
+        "Sol Kadhi",
+        "Elaneer Sherbet",
+        "Rose Milk",
+        "Lemon Soda",
+        "Puliyodharai Drink",
+        "Pazhaya Soru Kanji",
+        "Sukku Malli Coffee",
+        "Mango Lassi",
+        "Badam Milk",
+        "Pineapple Punch",
+        "Papaya Milkshake",
+        "Jackfruit Juice",
+        "Fig Milkshake",
+        "Ginger Tea",
+        "Mint Tea",
+        "Masala Chai",
+        "Thaalicha Neer",
+        "Akkaravadisal",
+        "Peach Iced Tea",
+        "Cardamom Tea",
+        "Tapioca Milkshake",
+        "Pomegranate Juice",
+        "Dates Shake",
+        "Strawberry Milkshake",
+        "Avocado Shake",
+        "Musk Melon Juice",
+        "Panakam",
+        "Pulissery",
+        "Mint Lassi",
+        "Chilli Chaas",
+        "Rose Milkshake",
+        "Gulkand Lassi",
+        "Chocolate"
+    ];
+    var foodsForThunderstormClimate = [
+        "Khichdi",
+        "Pakoras",
+        "Poha",
+        "Soup (Tomato, Lentil, Vegetable)",
+        "Tea",
+        "Coffee",
+        "Stir-fried Vegetables",
+        "Stews",
+        "Curries",
+        "Roti with Dal",
+        "Instant Noodles",
+        "Fruits (Bananas, Apples, Oranges)",
+        "Maggi",
+        "Bread with Butter or Jam",
+        "Biryani",
+        "Samosa",
+        "Dhokla",
+        "Sandwiches",
+        "Idli",
+        "Vada Pav",
+        "Fritters (Various Vegetables)",
+        "Rice with Dal",
+        "Chaat",
+        "Bhel Puri",
+        "Curd Rice",
+        "Aloo Paratha",
+        "Vegetable Biryani",
+        "Papad",
+        "Aloo Tikki",
+        "Rasam",
+        "Upma",
+        "Samosa Chaat",
+        "Aloo Chaat",
+        "Mango Shake",
+        "Banana Shake",
+        "Lemonade",
+        "Buttermilk",
+        "Mango Lassi",
+        "Cucumber Salad",
+        "Onion Pakoras",
+        "Potato Wedges",
+        "Vegetable Soup",
+        "Chicken Soup",
+        "Cornbread",
+        "Ginger Tea",
+        "Masala Chai",
+        "Cereal with Milk",
+        "Apple Pie",
+        "Egg Curry",
+        "Paneer Tikka",
+        "Fish Curry",
+        "Chicken Biryani",
+        "Bread Pudding",
+        "Coconut Water",
+        "Raita",
+        "Fried Rice",
+        "Tomato Rice",
+        "Pineapple Salad",
+        "Peanut Butter Sandwich",
+        "Omelette",
+        "Fried Chicken",
+        "Shrimp Curry",
+        "Vegetable Cutlets",
+        "Lemon Rice",
+        "Cheese Toast",
+        "Vegetable Pulao",
+        "Egg Bhurji",
+        "Vegetable Samosa",
+        "Vegetable Noodles",
+        "Mushroom Soup",
+        "Chocolate Milkshake",
+        "Avocado Smoothie",
+        "Green Salad",
+        "Cabbage Soup",
+        "Fruit Salad",
+        "Chicken Sandwich",
+        "Buttered Popcorn",
+        "Vegetable Khichdi",
+        "Tofu Stir-fry",
+        "Egg Salad",
+        "Lentil Salad",
+        "Cauliflower Soup",
+        "Spinach Salad",
+        "Potato Salad",
+        "Chickpea Salad",
+        "Broccoli Salad",
+        "Carrot Soup",
+        "Zucchini Bread",
+        "Gazpacho",
+        "Cucumber Soup",
+        "Cheese Platter",
+        "Nutella Sandwich",
+        "Mint Lemonade",
+        "Beef Stew",
+        "Pasta Salad",
+        "Hummus with Pita Bread",
+        "Falafel",
+        "Chicken Curry",
+        "Vegetable Korma",
+        "Rajma Chawal",
+        "Methi Thepla",
+        "Puran Poli",
+        "Boondi Raita",
+        "Gajar Ka Halwa",
+        "Chole Bhature",
+        "Masala Papad",
+        "Jalebi",
+        "Bisi Bele Bath",
+        "Rava Kesari",
+        "Moong Dal Halwa",
+        "Lemon Rice",
+        "Gulab Jamun",
+        "Pineapple Raita",
+        "Chana Masala",
+        "Aloo Gobi",
+        "Palak Paneer",
+        "Tandoori Chicken",
+        "Bhindi Masala",
+        "Malai Kofta",
+        "Paneer Butter Masala",
+        "Mango Kulfi",
+        "Shahi Paneer",
+        "Butter Chicken",
+        "Rasgulla",
+        "Mutton Curry",
+        "Paneer Tikka Masala",
+        "Dal Makhani",
+        "Chicken Biryani",
+        "Hyderabadi Biryani",
+        "Aloo Paratha",
+        "Puri Bhaji",
+        "Kadhi Chawal",
+        "Fish Curry",
+        "Chicken Tikka",
+        "Mango Shake",
+        "Papdi Chaat",
+        "Kulfi",
+        "Samosa",
+        "Dal Tadka",
+        "Dahi Vada",
+        "Aloo Tikki",
+        "Gobi Manchurian",
+        "Manchow Soup",
+        "Vegetable Hakka Noodles",
+        "Vegetable Manchurian",
+        "Sweet Corn Soup",
+        "Egg Fried Rice",
+        "Veg Spring Rolls",
+        "Chilli Chicken",
+        "Chow Mein",
+        "Chicken Momos",
+        "Schezwan Fried Rice",
+        "Pineapple Fried Rice",
+        "Garlic Naan",
+        "Butter Naan",
+        "Tandoori Roti",
+        "Paneer Paratha",
+        "Egg Curry",
+        "Chicken Kebab",
+        "Chicken 65",
+        "Paneer 65",
+        "Veg Pulao",
+        "Chicken Fried Rice",
+        "Masoor Dal",
+        "Butter Garlic Prawns",
+        "Vegetable Clear Soup",
+        "Corn Cheese Balls",
+        "Onion Uttapam",
+        "Masala Uttapam",
+        "Vegetable Oats Porridge",
+        "Chicken 65 Biryani",
+        "Lamb Biryani",
+        "Mutton Rogan Josh",
+        "Chilli Paneer",
+        "Gajar Ka Halwa",
+        "Rava Upma",
+        "Pesarattu Dosa",
+        "Chicken Noodles",
+        "Masala Oats",
+        "Egg Roll",
+        "Prawn Biryani",
+        "Mushroom Fried Rice",
+        "Veg Biryani",
+        "Tomato Soup",
+        "Sweet Corn Chicken Soup",
+        "Vegetable Manchow Soup",
+        "Chicken Manchow Soup",
+        "Hot and Sour Soup",
+        "Mushroom Soup",
+        "Lemon Coriander Soup",
+        "Veg Spring Soup",
+        "Tom Yum Soup",
+        "Chicken Tikka Pizza",
+        "Margherita Pizza",
+        "Paneer Tikka Pizza",
+        "Veggie Delight Pizza",
+        "Cheese Burst Pizza",
+        "Pepperoni Pizza",
+        "Hawaiian Pizza",
+        "Mushroom Pizza",
+        "Chicken Supreme Pizza",
+        "Farmhouse Pizza",
+        "Barbecue Chicken Pizza",
+        "Tandoori Chicken Pizza",
+        "Seafood Pizza",
+        "Mexican Pizza",
+        "Buffalo Chicken Pizza",
+        "Pasta Alfredo",
+        "Pasta Arrabiata",
+        "Pasta Primavera",
+        "Spaghetti Carbonara",
+        "Fettuccine Alfredo"];
+        var foodsForExtremeWeather = [
+
+            "Hot Soup",
+            "Steamed Momos",
+            "Masala Chai",
+            "Pakoras",
+            "Ginger Tea",
+            "Hot Chocolate",
+            "Maggi Noodles",
+            "Tomato Soup",
+            "Vegetable Stew",
+            "Chicken Clear Soup",
+            "Mushroom Soup",
+            "Corn Chowder",
+            "Pulao",
+            "Khichdi",
+            "Steamy Idlis",
+            "Sesame Toast",
+            "Vegetable Upma",
+            "Boiled Eggs",
+            "Omelette",
+            "Oatmeal Porridge",
+            "Waffles",
+            "Pancakes",
+            "French Toast",
+            "Fruit Salad",
+            "Granola",
+            "Yogurt Parfait",
+            "Fruit Smoothie",
+            "Lemon Tea",
+            "Herbal Infusions",
+            "Warm Milk with Honey",
+            "Cinnamon Rolls",
+            "Banana Bread",
+            "Blueberry Muffins",
+            "Croissants",
+            "Danish Pastry",
+            "Cupcakes",
+            "Cereal Bars",
+            "Granola Bars",
+            "Nutella Sandwich",
+            "Cheese Toast",
+            "Fruit Jam",
+            "Peanut Butter",
+            "Almond Butter",
+            "Cashew Butter",
+            "Chocolate Spread",
+            "Honey Roasted Almonds",
+            "Trail Mix",
+            "Mixed Nuts",
+            "Energy Bars",
+            "Protein Bars",
+            "Dried Fruits",
+            "Popcorn",
+            "Pretzels",
+            "Cheese Crackers",
+            "Oat Cookies",
+            "Chocolate Chip Cookies",
+            "Digestive Biscuits",
+            "Rice Cakes",
+            "Banana Chips",
+            "Apple Slices with Peanut Butter",
+            "Carrot Sticks with Hummus",
+            "Cucumber Slices with Yogurt Dip",
+            "Popcorn Chicken",
+            "Chicken Nuggets",
+            "Fish Fingers",
+            "Mini Burgers",
+            "Mini Pizzas",
+            "Chicken Wings",
+            "Samosas",
+            "Spring Rolls",
+            "Vegetable Cutlets",
+            "Paneer Tikka",
+            "Tandoori Chicken",
+            "Chicken Tikka",
+            "Chicken Seekh Kebab",
+            "Fish Tikka",
+            "Fish Fry",
+            "Veg Momos",
+            "Chicken Momos",
+            "Veg Hakka Noodles",
+            "Chicken Hakka Noodles",
+            "Veg Manchurian",
+            "Chicken Manchurian",
+            "Chowmein",
+            "Fried Rice",
+            "Veg Biryani",
+            "Chicken Biryani",
+            "Egg Biryani",
+            "Veg Pulao",
+            "Chicken Pulao",
+            "Mutton Pulao",
+            "Kathi Roll",
+            "Frankie",
+            "Bhel Puri",
+            "Pani Puri",
+            "Dahi Puri",
+            "Sev Puri",
+            "Dahi Vada",
+            "Aloo Tikki Chaat",
+            "Papdi Chaat",
+            "Ragda Pattice",
+            "Vada Pav",
+            "Bread Pakora",
+            "Aloo Chaat",
+            "Masala Corn",
+            "Spicy Peanuts",
+            "Cheese Balls",
+            "Garlic Bread",
+            "Bruschetta",
+            "Quesadillas",
+            "Tacos",
+            "Nachos",
+            "Cheese Fondue",
+            "Chocolate Fondue",
+            "Fruit Platter",
+            "Cheese Platter",
+            "Antipasto Platter",
+            "Hummus Platter",
+            "Sushi Platter",
+            "Cold Cuts Platter",
+            "Mongolian Hot Pot",
+            "Fondue Pot",
+            "Fruit Skewers",
+            "Caprese Skewers",
+            "Veggie Wraps",
+            "Chicken Wraps",
+            "Falafel Wrap",
+            "Shawarma",
+            "Chicken Burger",
+            "Veggie Burger",
+            "Fish Burger",
+            "Lamb Burger",
+            "Grilled Chicken Sandwich",
+            "BLT Sandwich",
+            "Club Sandwich",
+            "Philly Cheesesteak",
+            "Reuben Sandwich",
+            "Cuban Sandwich",
+            "Monte Cristo Sandwich",
+            "Croque Monsieur",
+            "Panini",
+            "Grilled Cheese Sandwich",
+            "Pulled Pork Sandwich",
+            "Hot Dog",
+            "Bratwurst",
+            "Corn Dog",
+            "Taco Salad",
+            "Caesar Salad",
+            "Greek Salad",
+            "Nicoise Salad",
+            "Waldorf Salad",
+            "Cobb Salad",
+            "Caprese Salad",
+            "Tabbouleh Salad",
+            "Pasta Salad",
+            "Fruit Salad",
+            "Potato Salad",
+            "Bean Salad",
+            "Coleslaw",
+            "Macaroni and Cheese",
+            "Vegetable Lasagna",
+            "Chicken Lasagna",
+            "Seafood Lasagna",
+            "Spaghetti Bolognese",
+            "Fettuccine Alfredo",
+            "Penne Arrabiata",
+            "Ravioli",
+            "Gnocchi",
+            "Vegetable Pizza",
+            "Margherita Pizza",
+            "Pepperoni Pizza",
+            "Hawaiian Pizza",
+            "BBQ Chicken Pizza",
+            "Supreme Pizza",
+            "Meat Lovers Pizza",
+            "Seafood Pizza",
+            "Paneer Pizza",
+            "Tandoori Chicken Pizza",
+            "Fish Pizza",
+            "Veggie Calzone",
+            "Chicken Calzone",
+            "Seafood Calzone",
+            "Paneer Calzone",
+            "Stromboli",
+            "Quiche",
+            "Frittata",
+            "Egg Sandwich",
+            "Egg Salad Sandwich",
+            "Egg Curry",
+            "Egg Fried Rice",
+            "Egg Bhurji",
+            "Egg Roll",
+            "Egg Curry Puff",
+            "Egg Paratha",
+            "Egg Pulao",
+            "Egg Pizza",
+            "Egg Burger",
+            "Egg Wrap",
+            "Egg Benedict",
+            "Egg Drop Soup",
+            "Egg Noodle Soup",
+            "Egg Drop Ramen",
+            "Egg Salad",
+            "Egg Mayo Sandwich",
+            "Egg Muffin",
+            "Egg Pancake",
+            "Egg Casserole",
+            "Egg Croissant",
+            "Egg Bagel",
+        ];
+            
+       
+switch (weatherCondition) {
+    case "clear":
+        if (currentTime >= 6 && currentTime < 19) {
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/sky-weather.gif')";
+        } else {
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/anime-himmel.gif')";
+        }
+        selectedFoods = foodsForClearClimate;
+        break;
+    
+    case "clouds":
+        if (currentTime >= 6 && currentTime < 19) {
+            backgroundImageURL = "url('c:/Users/Mukil/Documents/clouds-nature.gif')";
+       
+        } else {
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/ffda36184fe14708bbf6757714c239ecabb2ca8b_hq.gif')";
+        }
+        selectedFoods = foodsForCloudyClimate;
+        break;
+
+        case "few clouds":
+            backgroundImageURL = "url('c:/Users/Mukil/Documents/200w.gif')";
+            selectedFoods = foodsForCloudyClimate;
+            break;
+
+        case "overcast clouds":
+            backgroundImageURL = "url('c:/Users/Mukil/Documents/storm-dark-clouds.gif')";
+            selectedFoods = foodsForCloudyClimate;
+            break;
+
+        case "broken cloud":
+            backgroundImageURL = "url('c:/Users/Mukil/Documents/clouds-nature.gif')";
+            selectedFoods = foodsForCloudyClimate;
+            break;
+
+        case "scattered clouds":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/moving-clouds-world-meteorological-day.gif')";
+            selectedFoods = foodsForCloudyClimate;
+            break;
+
+        case "moderate rain":
+            backgroundImageURL = "url('c:/Users/Mukil/Documents/00a81e139cc1b8792b8542882a3807cd.gif')";
+            selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "rain":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/b1f3f164e96c1b8b203fd7d34640eb57.gif')";
+            selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "light rain":
+            backgroundImageURL = "url('c:/Users/Mukil/Documents/00a81e139cc1b8792b8542882a3807cd.gif')";
+            selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "heavy intensity rain":
+            backgroundImageURL = "url('c:/Users/Mukil/Documents/81f8354b66434275e298d93c3b5a85bb.gif')";
+            selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "extreme rain":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/eb17f1d24fd595b46430941cfab29b46.gif')";
+            selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "freezing rain":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/d6970ea7afec467b1534deab0e3d38b1.gif')";
+            selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "light intensity shower rain":
+            backgroundImageURL = "url('c:/Users/Mukil/Documents/00a81e139cc1b8792b8542882a3807cd.gif')";
+           selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "shower rain":
+            backgroundImageURL = "url('c:/Users/Mukil/Documents/00a81e139cc1b8792b8542882a3807cd.gif')";
+            selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "heavy intensity shower rain":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/eb17f1d24fd595b46430941cfab29b46.gif')";
+            selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "ragged shower rain":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/eb17f1d24fd595b46430941cfab29b46.gif')";
+            selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "snow":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/1452239716-5-places-in-india-to-experience-snowfall-this-season.gif')";
+            selectedFoods = foodsForSnowyClimate;
+            break;
+
+        case "light snow":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/95ff24bf300f7144e4df97423e237db6.gif')";
+            selectedFoods = foodsForSnowyClimate;
+            break;
+
+        case "heavy snow":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/e29e3fe73b2f01e990e7b28e082690eb.gif')";
+           
+            selectedFoods = foodsForSnowyClimate;
+            break;
+
+        case "sleet":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/7TxC.gif')";
+            selectedFoods = foodsForSnowyClimate;
+            break;
+
+        case "light shower sleet":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/7TxC.gif')";
+            selectedFoods = foodsForSnowyClimate;
+            break;
+
+        case "shower sleet":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/7TxC.gif')";
+           selectedFoods = foodsForSnowyClimate;
+            break;
+
+        case "light rain and snow":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/7TxC.gif')";
+           selectedFoods = foodsForSnowyClimate;
+            break;
+
+        case "rain and snow":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/7TxC.gif')";
+           selectedFoods = foodsForSnowyClimate;
+            break;
+
+        case "light shower snow":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/7TxC.gif')";
+          selectedFoods = foodsForSnowyClimate;
+            break;
+
+        case "shower snow":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/7TxC.gif')";
+            selectedFoods = foodsForSnowyClimate;
+            break;
+
+        case "heavy shower snow":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/e7288cdbeac3caa91dbfe2d0c3cdd200.gif')";
+            selectedFoods = foodsForSnowyClimate;
+            break;
+
+        case "thunderstorm":
+        case "thunderstorm with rain":
+        case "thunderstorm with light rain":
+        case "heavy thunderstorm":
+        case "thunderstorm with heavy rain":
+        case "light thunderstorm":
+        case "ragged thunderstorm":
+        case "thunderstorm with light drizzle":
+        case "thunderstorm with drizzle":
+        case "thunderstorm with heavy drizzle":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/souronesss.gif')";
+           selectedFoods = foodsForThunderstormClimate;
+            break;
+
+        case "light intensity drizzle":
+            backgroundImageURL = "url('c:/Users/Mukil/Documents/38e3115f1d06ba0b443a75ff0c7cf2ee.gif')";
+            selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "drizzle":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/b1f3f164e96c1b8b203fd7d34640eb57.gif')";
+            selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "heavy intensity drizzle":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/e1b4a60876593bc5c849b2a8e9029bec.gif')";
+            selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "light intensity drizzle rain":
+            backgroundImageURL = "url('c:/Users/Mukil/Documents/38e3115f1d06ba0b443a75ff0c7cf2ee.gif')";
+           selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "drizzle rain":
+            backgroundImageURL = "url('c:/Users/Mukil/Documents/38e3115f1d06ba0b443a75ff0c7cf2ee.gif')";
+            selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "heavy intensity drizzle rain":
+            backgroundImageURL = "url('c:/Users/Mukil/Documents/38e3115f1d06ba0b443a75ff0c7cf2ee.gif')";
+           selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "shower rain and drizzle":
+            backgroundImageURL = "url('c:/Users/Mukil/Documents/38e3115f1d06ba0b443a75ff0c7cf2ee.gif')";
+           selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "heavy shower rain and drizzle":
+            backgroundImageURL = "url('c:/Users/Mukil/Documents/38e3115f1d06ba0b443a75ff0c7cf2ee.gif')";
+            selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "shower drizzle":
+            backgroundImageURL = "url('c:/Users/Mukil/Documents/38e3115f1d06ba0b443a75ff0c7cf2ee.gif')";
+            selectedFoods = foodsForRainyClimate;
+            break;
+
+        case "haze":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/clouds-weather-change bg.gif')";
+          selectedFoods = foodsForExtremeWeather;
+            break;
+
+        case "mist":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/v1A7LP.gif')";
+            selectedFoods = foodsForExtremeWeather;
+            break;
+
+        case "smoke":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/tumblr_nabl83XPqd1r4xsuho1_500.gif')";
+            selectedFoods = foodsForExtremeWeather;
+            break;
+
+        case "dust whirls":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/vehicles-greenhouse.gif')";
+            selectedFoods = foodsForExtremeWeather;
+            break;
+
+        case "fog":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/giphy (3).gif')";
+            selectedFoods = foodsForExtremeWeather;
+            break;
+
+        case "sand":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/thaddaeus-andreades-storm-sh01.gif')";
+            selectedFoods = foodsForExtremeWeather;
+            break;
+
+        case "volcanic ash":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/smoke-katla.gif')";
+            selectedFoods = foodsForExtremeWeather;
+            break;
+
+        case "squalla":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/https___advancelocal-adapter-image-uploads.s3.amazonaws.com_expo.advance.net_img_e67b09e9f9_width2048_c57_njweathersnowsqualli287.webp')";
+           sectedFoods = foodsForExtremeWeather;
+            break;
+
+        case "tornado":
+            backgroundImageURL = "url('c:/Users/Mukil/Downloads/storm.gif')";
+            selectedFoods = foodsForExtremeWeather;
+            break;
+
+        default:
+            backgroundImageURL = "";
+            selectedFoods = [];
+            break;
+    }
+               
+document.getElementById("container").style.backgroundImage = backgroundImageURL;
+document.getElementById("column").style.backgroundImage = backgroundImageURL;
+document.getElementById("column1").style.backgroundImage = backgroundImageURL;
+function updateFoodList() {
+let list = document.getElementById("list");
+list.innerHTML = "";
+let selectedFoods = getRandomFoods(6);
+selectedFoods.forEach(food => {
+let listItem = document.createElement("li");
+listItem.textContent = food;
+list.appendChild(listItem);
+});
+}
+
+function getRandomFoods(numFoods) {
+let randomFoods = [];
+let usedIndices = [];
+while (randomFoods.length < numFoods) {
+let randomIndex = Math.floor(Math.random() * selectedFoods.length);
+if (!usedIndices.includes(randomIndex)) {
+randomFoods.push(foodsForRainyClimate[randomIndex]);
+usedIndices.push(randomIndex);
+}
+}
+return randomFoods;
+}
+const muteButton = document.getElementById('mute-toggle');
+const muteImage = document.getElementById('mute-img');
+let isMuted = localStorage.getItem('isMuted') === 'true';
+
+// Initialize mute state based on local storage
+if (isMuted) {
+    speechSynthesis.cancel();
+    toggleMuteImage(true);
+}
+
+// Speak message on page load if not muted
+window.onload = () => {
+    setVoice();
+    speakMessage();
+};
+
+// Toggle mute on button click
+muteButton.addEventListener('click', () => {
+    isMuted = !isMuted;
+    localStorage.setItem('isMuted', isMuted);
+
+    if (isMuted) {
+        speechSynthesis.cancel();
+    } else {
+        speakMessage();
+    }
+
+    toggleMuteImage(isMuted);
+});
+
+// Function to speak the message
+function speakMessage() {
+    if (!isMuted) {
+      
+
+        window.speechSynthesis.speak(message);
+       
+    }
+}
+
+// Function to set the voice to Indian male voice
+function setVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    const indianMaleVoice = voices.find(voice => voice.lang === 'en-IN' && voice.name.includes('male'));
+
+    if (indianMaleVoice) {
+        window.speechSynthesis.getVoices().forEach((voice) => {
+            if (voice.lang === 'en-IN' && voice.gender === 'male') {
+                message1.voice = voice;
+                message2.voice = voice;
+            }
+        });
+    } else {
+        console.error('Indian male voice not found. Using default voice.');
+    }
+}
+
+// Function to toggle mute image
+function toggleMuteImage(muted) {
+    muteImage.src = muted ? 'C:/Users/Mukil/Downloads/1.png' : 'C:/Users/Mukil/Downloads/360_F_187902352_T0A6TDGN9m68hdBXs9eUo6L72Y1BhYz1-removebg-preview1.png'; // Update image paths for mute and unmute
+    muteImage.alt = muted ? 'Muted' : 'Speaker';
+}
+
+// Load voices
+window.speechSynthesis.onvoiceschanged = setVoice;
+
+        
+updateFoodList();
+} catch (error) {
+    console.error('An error occurred:', error);
+}
+}
+
+</script>
+</body>
+</html>
+
