@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="website icon" type="png" href="c:\Users\Mukil\Downloads\logo-removebg-preview.png">
+<title>Weather on major Cities</title>
+<style>
+  
+* {box-sizing: border-box;}
+body {font-family: Verdana, sans-serif;
+  background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            }
+img {vertical-align: middle;}
+.slideshow-container {
+  top: 60%; /* Adjust this value to lower the container */
+  overflow-x: scroll;
+  white-space: nowrap; /* Prevent line breaks */
+  max-width: 100%; /* Adjust to fit screen */
+  position: relative;
+  margin: auto;
+  -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on iOS */
+  padding: 10px; /* Padding around the slides */
+  border-radius: 8px; /* Rounded corners for the container */
+ 
+}
+
+
+/* Hide scrollbar for Webkit browsers (Chrome, Safari) */
+.slideshow-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+.slideshow-container {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Slide style */
+.slide {
+  display: inline-block; /* Display slides horizontally */
+  width: 40%; /* Set width for each slide */
+  position: relative;
+  height: 300px; /* Set a fixed height for uniformity */
+  overflow: hidden; /* Ensure images and text stay within the slide */
+  text-align: center; /* Center align content */
+
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  margin: 10px; /* Example margin */
+  box-sizing: border-box; /* Ensure padding and border do not increase width */
+  border-radius: 8px; /* Rounded corners for the slides */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+  
+}
+
+.slide:hover {
+  transform: scale(1.05); /* Slightly enlarge slide on hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+}
+
+/* On smaller screens, adjust slide height */
+@media only screen and (max-width: 600px) {
+  .slide {
+    height: 200px; /* Adjust height for smaller screens */
+    width: 80%; /* Adjust width for smaller screens */
+  }
+}
+
+/* Caption text */
+.text {
+  color: #ffffff;
+  font-size: 15px;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  background-color:rgba(0, 0, 0, 0.5); /* Darker background for better readability */
+  border-bottom-left-radius: 8px; /* Rounded bottom corners */
+  border-bottom-right-radius: 8px;
+}
+
+/* Number text (1/3 etc) - if needed */
+.numbertext {
+  font-size: 12px;
+  padding: 8px 12px;
+  position: absolute;
+  top: 0;
+  color: #fff; /* White text color */
+}
+
+/* Next & previous buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  padding: 16px;
+  margin-top: -22px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
+  border-radius: 3px; /* Rounded corners */
+  user-select: none;
+  z-index: 1; /* Ensure buttons are above slides */
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for better visibility */
+}
+
+.next {
+  right: 0;
+}
+
+.prev {
+  left: 0;
+}
+
+/* Hover effect for buttons */
+.prev:hover, .next:hover {
+  background-color: rgba(0, 0, 0, 0.8); /* Darker background on hover */
+}
+
+/* On smaller screens, decrease text size */
+@media only screen and (max-width: 600px) {
+  .text {
+    font-size: 12px;
+  }
+  .numbertext {
+    font-size: 10px;
+  }
+  .prev, .next {
+    font-size: 14px;
+    padding: 12px;
+  }
+}
+#weather-info img {
+    width: 10px; /* Adjust the width as needed */
+    height: 10px; /* Adjust the height as needed */
+  }
+.h2 {
+  color: white;
+  text-align: center;
+  margin-top: 130px; /* Adjust this value to lower the h2 */
+}
+h2 {
+  color: white;
+  text-align: center;
+  
+}
+.input-box {
+  position: absolute;
+  top: -60px; /* Adjust top distance from the top of the container */
+  left: 10px; /* Adjust left distance from the left of the container */
+  padding: 8px; /* Optional: Add padding for better appearance */
+}
+nav {
+    position: fixed;
+    top: 1px; 
+    left: 10px; 
+    right: 10px; 
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    border-radius: 15px; 
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1000;
+    border: 2px solid transparent;
+    animation: neon 1.5s infinite alternate;
+    font-size: 12px; 
+}
+.menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+    
+        .menu-item {
+            position: relative;
+            margin: 0 10px;
+        }
+    
+        .menu-item a, .dropdown-menu a, .dropdown-menu button {
+            display: block;
+            color: #007bff;
+            text-align: center;
+            background-color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1em;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 5px;
+            border: 2px solid transparent;
+        }
+    
+        .menu-item a:hover, .dropdown-menu a:hover, .dropdown-menu button:hover {
+            color: white;
+            background-color: #007bff;
+          
+            transform: scale(1.05);
+           
+            border-color: #007bff;
+            border-radius: 25px; 
+        }
+    
+        .menu-item a button {
+            all: unset;
+            cursor: pointer;
+        }
+    
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: white;
+            top: 100%;
+            left: 0;
+            min-width: 150px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    
+        .dropdown-menu li {
+            padding: 0;
+            margin: 0;
+        }
+    
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+@keyframes neon {
+    0% {
+        box-shadow: 0 0 10px white, 0 0 20px white, 0 0 30px white, 0 0 40px white, 0 0 50px white;
+        border-color: white;
+    }
+    100% {
+        box-shadow: 0 0 20px #ffffff, 0 0 30px #ffffff, 0 0 40px #ffffff, 0 0 50px #ffffff, 0 0 60px #ffffff;
+        border-color: #ffffff;
+    }
+}
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+/* Navbar styles */
+.navbar {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-start;
+}
+.menu-item {
+    position: relative;
+}
+.dropdown-toggle1 {
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 15px;
+   
+    color: #1976d2;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+}
+.dropdown-toggle1:hover {
+    background-color: #0056b3;
+}
+.dropdown-menu1 {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: calc(100% - 320px); 
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+    padding: 10px;
+    min-width: 300px;
+    margin-top: 5px;
+}
+.dropdown-menu1.show {
+    display: block;
+}
+.dropdown-menu1 li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.dropdown-menu1 li:last-child {
+    margin-bottom: 0;
+}
+.dropdown-menu1 label {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #333;
+}
+.select-box {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #fff;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+}
+.select-box:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 28px;
+    vertical-align: middle;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color:red;
+    transition: .4s;
+    border-radius: 28px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #4CAF50;
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+.slider.round {
+    border-radius: 28px;
+}
+.navbar {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.menu-item {
+    position: relative;
+}
+
+.dropdown-toggle1 {
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 15px;
+   
+    color: #1976d2;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.dropdown-toggle1:hover {
+    background-color: #0056b3;
+}
+
+.dropdown-menu1 {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: calc(100% - 320px); /* Adjust this value as needed */
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+    padding: 10px;
+    min-width: 300px;
+    margin-top: 5px;
+}
+.menu-item a:hover, .dropdown-menu a:hover, .dropdown-menu button:hover {
+            color: white;
+            background-color: #007bff;
+          
+            transform: scale(1.05);
+           
+            border-color: #007bff;
+            border-radius: 25px; /* Rounded corners on hover */
+        }
+
+.dropdown-menu1.show {
+    display: block;
+}
+
+.dropdown-menu1 li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.dropdown-menu1 li:last-child {
+    margin-bottom: 0;
+}
+
+</style>
+</head>
+<body>
+  <nav>
+    <ul class="menu">
+      <li class="menu-item">
+        <a><button onclick="goBack192()" id="api">CURRENT WEATHER</button></a>
+      </li>
+        <li class="menu-item">
+            <a><button onclick="goBack15()" id="api">WEATHER MAP</button></a>
+            
+        </li>
+        <li class="menu-item dropdown">
+            <a href="#" class="dropdown-toggle">FUTURE FORECAST</a>
+            <ul class="dropdown-menu">
+                <li><a><button onclick="goBack1()" id="hourlyButton">HOURLY</button></a></li>
+                <li><a><button onclick="goBack19()" id="hourlyButton">DAILY</button></a></li>
+               
+            </ul>
+        </li>
+     
+        <li class="menu-item">
+            <a><button onclick="goBack14()" id="api">WEATHER HISTORY</button></a>
+            
+        </li>
+        <li class="menu-item">
+            <a><button onclick="goBack191()" id="api">AIR POLLUTION INDEX</button></a>
+        </li>                                                                                                                                                      
+        <li class="menu-item">
+            <a><button onclick="goBack12()" id="api">MARINE WEATHER REPORT</button></a>
+          
+          
+        </li>
+    </ul>
+    
+        
+        
+
+</nav>
+<h2 class="h2">WEATHER IN MAJOR RELIGIOUS CITIES</h2>
+
+<div class="slideshow-container" id="religiousCities">
+
+ 
+
+  <div class="slide">
+    <img src="https://www.tusktravel.com/blog/wp-content/uploads/2021/03/Things-to-do-in-ancient-place-of-world-Varanasi.jpg" style="width:100%">
+    <div class="text" id="varanasi">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://www.urlaubstracker.de/wp-content/uploads/2018/12/israel-jerusalem-kuppel.jpg" style="width:100%">
+    <div class="text" id="jerusalem">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="c:\Users\Mukil\Downloads\Kabah-hajj-pilgrims-Saudi-Arabia-Mecca.webp" style="width:100%">
+    <div class="text" id="mecca">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://th.bing.com/th/id/OIP.LuZ7XRF4XWzBUsdg59j6hgEsDH?rs=1&pid=ImgDetMain" style="width:100%">
+    <div class="text" id="vatican">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://www.tripsavvy.com/thmb/QZUBiTCTl2BvMAAla9vmUBqQEAk=/2120x1414/filters:fill(auto,1)/GettyImages-618355052-b865a78b33cf412b915909ad9d941f27.jpg" style="width:100%">
+    <div class="text" id="bodhgaya">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://www.whyweseek.com/wp-content/uploads/2018/03/Golden-Temple-at-Night-Amritsar-1024x683.jpg" style="width:100%">
+    <div class="text" id="amritsar">Loading...</div>
+  </div>
+
+
+
+  <div class="slide">
+    <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0e/50/ac/fa/the-old-city-of-safed.jpg?w=1000&h=600&s=1" style="width:100%">
+    <div class="text" id="Safed, Israel">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://cdn2.civitatis.com/francia/lourdes/galeria/big/santuario-lourdes-francia.jpg" style="width:100%">
+    <div class="text" id="Lourdes, France">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://th.bing.com/th/id/R.f2257da2442701aba39349eb1128cc2a?rik=H%2fq3tvjE5DCHDA&riu=http%3a%2f%2frishikesh.net%2fwp-content%2fuploads%2f2019%2f11%2fbigstock-Rishikesh-India-Circa-April-329638714.jpg&ehk=Uptj5ZNmgYbgnXdTnXB21UeyOAYxRd7N2uJYsT4MWHM%3d&risl=1&pid=ImgRaw&r=0" style="width:100%">
+    <div class="text" id="Rishikesh, India ">Loading...</div>
+  </div>
+
+ 
+
+  <div class="slide">
+    <img src="https://cdn.britannica.com/12/94612-050-B4EEB84A/temple-Buddhist-Mahabodhi-Bihar-India-Bodh-Gaya.jpg" style="width:100%">
+    <div class="text" id="Gaya, India">Loading...</div>
+  </div>
+  
+  
+  <div class="slide">
+  <img src="https://images.herzindagi.info/image/2023/Jul/Tirumala-Tirupati-Balaji-Temple.jpg" style="width:100%">
+  <div class="text" id="tirupati">Loading...</div>
+</div>
+
+<div class="slide">
+
+    <img src="https://th.bing.com/th/id/OIP.TXZ2NaANhanG5EONAleVAQHaE8?rs=1&pid=ImgDetMain" style="width:100%">
+    <div class="text" id="pushkar">Loading...</div>
+</div>
+
+ 
+  <div class="slide">
+    <img src="https://i.redd.it/pelrjaxkk8bz.jpg" style="width:100%">
+    <div class="text" id="Assisi, Italy">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://cbnisrael.org/wp-content/uploads/2021/12/2021-12-21-Bethlehem-Marc-Turnage.jpg" style="width:100%">
+    <div class="text" id="Bethlehem, Pennsylvania">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://www.tripsavvy.com/thmb/rWkkWKHMljHucxoU8n3HaIxxFTo=/2108x1422/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-55844454-5c2d52e246e0fb0001737abd.jpg" style="width:100%">
+    <div class="text" id="Fatima, Portugal">Loading...</div>
+  </div>
+
+
+  <div class="slide">
+    <img src="https://th.bing.com/th/id/OIP.x09__Y2mYcLMpbrnv3JyhwHaFb?rs=1&pid=ImgDetMain" style="width:100%">
+    <div class="text" id="kushinagar">Loading...</div>
+  </div>
+  
+</div>
+
+<h2>WEATHER IN MAJOR POPULATED CITIES</h2>
+
+<div class="slideshow-container" id="populationCities">
+
+  <div class="slide">
+    <img src="https://wallpaperaccess.com/full/44171.jpg" style="width:100%">
+    <div class="text" id="tokyo">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://cdn.britannica.com/37/189837-050-F0AF383E/New-Delhi-India-War-Memorial-arch-Sir.jpg" style="width:100%">
+    <div class="text" id="delhi">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://www.tripsavvy.com/thmb/xSYU3yS9dQDBPdWoRyz9kxPozDo=/4256x2832/filters:fill(auto,1)/panoramic-skyline-of-shanghai-shanghai-center-at-the-time-of-construction-1097393186-c81b13c30ce045f6a403089b14330963.jpg" style="width:100%">
+    <div class="text" id="shanghai">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://traveler.marriott.com/wp-content/uploads/2018/09/GI_815359526_CitadelView_Cairo.jpg" style="width:100%">
+    <div class="text" id="cairo">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://www.tripsavvy.com/thmb/it8sHh0oVibq47lae_qEZ1nyJD0=/4235x2471/filters:fill(auto,1)/GettyImages-545634687-58efeebd3df78cd3fcdf337e.jpg" style="width:100%">
+    <div class="text" id="mexico-city">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://www.indiachal.com/wp-content/uploads/2018/12/Historical_Gateway_Of_India.jpg" style="width:100%">
+    <div class="text" id="mumbai">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://www.tripsavvy.com/thmb/gOB_AxS5rn5WB_5KmGt8qySgqQQ=/4440x3066/filters:no_upscale():max_bytes(150000):strip_icc()/central-business-district-buildings-at-night-beijing-china--700672514-67bb1eade35249c2bd51d61310ffddda.jpg" style="width:100%">
+    <div class="text" id="beijing">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://th.bing.com/th/id/OIP.xSip25KyAsi7Iv_b39iKPQHaEK?rs=1&pid=ImgDetMain" style="width:100%">
+    <div class="text" id="dhaka">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://media.timeout.com/images/105263310/image.jpg" style="width:100%">
+    <div class="text" id="osaka">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://th.bing.com/th/id/R.4c4070bee55674d0f9525523ff66c696?rik=17QLTc%2bw85METw&riu=http%3a%2f%2fi.dawn.com%2fprimary%2f2014%2f08%2f53f3456c6c37d.jpg&ehk=wiZcweqYRZiku%2fLC9luh7qTVWLTjNI%2bYlDE3cH8B8Ig%3d&risl=&pid=ImgRaw&r=0" style="width:100%">
+    <div class="text" id="Karachi, Pakistan">Loading...</div>
+  </div>
+
+ 
+  
+
+</div>
+
+<h2>WEATHER IN MAJOR CULTURAL CITIES</h2>
+
+<div class="slideshow-container" id="culturalCities">
+
+  <div class="slide">
+    <img src="https://th.bing.com/th/id/OIP.NITL98O4BfKohLRTytEPYgAAAA?rs=1&pid=ImgDetMain" style="width:100%">
+    <div class="text" id="rome">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://wallpaperaccess.com/full/1192224.jpg" style="width:100%">
+    <div class="text" id="paris">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://franks-travelbox.com/wp-content/uploads/2020/06/grossbritannien-london-die-tower-bridge-wurde-1894-erocc88ffnet-und-ist-die-wohl-bekannteste-brucc88cke-londons-und-eine-der-schocc88nsten-der-welt-simon-lukas-shutterstock-1200x800@2x.jpg" style="width:100%">
+    <div class="text" id="london">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://wallpapercave.com/wp/wp2000976.jpg" style="width:100%">
+    <div class="text" id="new-york">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://www.roadaffair.com/wp-content/uploads/2017/10/ortakoy-mosque-istanbul-turkey-shutterstock_529286353.jpg" style="width:100%">
+    <div class="text" id="istanbul">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://th.bing.com/th/id/OIP.RFu55NZLm3znlbvCb5Xw4gHaE5?rs=1&pid=ImgDetMain" style="width:100%">
+    <div class="text" id="berlin">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://i.redd.it/nwwcr4z4bqj21.jpg" style="width:100%">
+    <div class="text" id="kyoto">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://www.russinfo.in/moscow/wp-content/uploads/2020/04/01-6.jpg" style="width:100%">
+    <div class="text" id="Moscow, Russia">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://cdn.holidayguru.es/wp-content/uploads/2016/08/Aerial-view-of-Christ-Sugarloaf-Rio-de-Janeiro-Brazil-iStock_55264880_LARGE-EDITORIAL-ONLY-dolphinphoto-2.jpg" style="width:100%">
+    <div class="text" id="Rio de Janeiro, Brazil">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://i.pinimg.com/originals/58/5b/d8/585bd80aa9b6fe9f1725ccddd6d8740c.jpg" style="width:100%">
+    <div class="text" id="Barcelona, Spain">Loading...</div>
+  </div>
+  
+
+
+  
+
+</div>
+<h2>WEATHER IN MAJOR FINANCIAL CITIES</h2>
+<div class="slideshow-container" id="financialCities">
+
+  <div class="slide">
+    <img src="https://s1.1zoom.me/b5050/232/England_Bridges_Tower_440891_3840x2400.jpg" style="width:100%">
+    <div class="text" id="London, UK">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/11/6f/2d/55/hong-kong-island.jpg?w=700&h=-1&s=1" style="width:100%">
+    <div class="text" id="Hong Kong, China">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://wallpaperaccess.com/full/5278574.jpg" style="width:100%">
+    <div class="text" id="Singapore">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://www.tripsavvy.com/thmb/d3aKk9WcqeKTU7UpBZHv7HOFWDI=/3865x2576/filters:no_upscale():max_bytes(150000):strip_icc()/romerberg-square-the-zum-standesamtchen-restaurant-and-the-romer-with-the-commerzbank-tower-in-the-background-frankfurt-germany-541460160-58e660c33df78c5162000f93.jpg" style="width:100%">
+    <div class="text" id="Frankfurt, Germany">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://lp-cms-production.imgix.net/2019-06/GettyImages-480295417_super.jpg?fit=crop&q=40&sharp=10&vib=20&auto=format&ixlib=react-8.6.4" style="width:100%">
+    <div class="text" id="Zurich, Switzerland">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://lp-cms-production.imgix.net/2019-06/59758d46f79e6f06e2725f147bfcd085-downtown-dubai.jpg?fit=crop&q=40&sharp=10&vib=20&auto=format&ixlib=react-8.6.4" style="width:100%">
+    <div class="text" id="Dubai, UAE">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://eyeoftheflyer.com/wp-content/uploads/2020/12/San-Francisco-Oakland-Bay-Bridge-Sunset-2048x1365.jpg" style="width:100%">
+    <div class="text" id="San Francisco, USA">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://maryamsuites.com/wp-content/uploads/2020/07/iStock-1040643480-1.jpg" style="width:100%">
+    <div class="text" id="Toronto, Canada">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://eskipaper.com/images/illinois-chicago-usa-buildings-1.jpg" style="width:100%">
+    <div class="text" id="Chicago, USA">Loading...</div>
+  </div>
+
+  <div class="slide">
+    <img src="https://th.bing.com/th/id/R.c38c019915e6e6020edcd902a9591019?rik=RvaauRbJBqdV5g&riu=http%3a%2f%2fwww.getsready.com%2fwp-content%2fuploads%2f2017%2f02%2fthe-center-of-prague-city.jpg&ehk=2sByJ2Vb%2b5Tb4ZmUQ4YeiGudQzaPp9nZ8cY6qyrMvFU%3d&risl=&pid=ImgRaw&r=0" style="width:100%">
+    <div class="text" id="Prague, Czech Republic">Loading...</div>
+  </div>
+
+</div>
+
+
+<h2>WEATHER IN MAJOR HISTORICAL CITIES</h2>
+<div class="slideshow-container" id="historicalkCities">
+
+
+
+<div class="slide">
+  <img src="https://th.bing.com/th/id/OIP.cFnOsj5m5JqRx7tD5xnXwQAAAA?rs=1&pid=ImgDetMain" style="width:100%">
+  <div class="text" id="Athens, Greece">Loading...</div>
+</div>
+
+<div class="slide">
+  <img src="https://www.unusualtraveler.com/wp-content/uploads/2019/04/DSC07519-2.jpg" style="width:100%">
+  <div class="text" id="Babylon, Iraq">Loading...</div>
+</div>
+
+<div class="slide">
+  <img src="https://th.bing.com/th/id/OIP.oRcBXrV7Z6gstVrLfLDwWgHaFj?rs=1&pid=ImgDetMain" style="width:100%">
+  <div class="text" id="Petra, Jordan">Loading...</div>
+</div>
+
+
+
+<div class="slide">
+  <img src="https://www.tripsavvy.com/thmb/jQWlo8De0KDjeXPQd1ie-5Q7JeY=/2116x1417/filters:fill(auto,1)/GettyImages-521733846_Darkroom-125adbb08a044a2db915fefc1eb741b2.jpg" style="width:100%">
+  <div class="text" id="Pune">Loading...</div>
+</div>
+
+<div class="slide">
+  <img src="https://imgcld.yatra.com/ytimages/image/upload/v1472551553/Ranchi_Overview.jpg" style="width:100%">
+  <div class="text" id="Ranchi">Loading...</div>
+</div>
+
+<div class="slide">
+  <img src="https://static.independent.co.uk/s3fs-public/thumbnails/image/2018/06/27/08/fez.jpg" style="width:100%">
+  <div class="text" id="Fez, Morocco ">Loading...</div>
+</div>
+
+<div class="slide">
+  <img src="https://chaloghumane.com/wp-content/uploads/2021/06/Madurai1.jpg" style="width:100%">
+  <div class="text" id="Madurai">Loading...</div>
+</div>
+
+
+<div class="slide">
+  <img src="https://1.bp.blogspot.com/-L3HKefMWXwQ/XdioPVGHifI/AAAAAAAATk4/6zdlfkiHFxsAb5gk7Mrz45JjBqGb9Q7FwCLcBGAsYHQ/s1600/IMG_20191101_082921.jpg" style="width:100%">
+  <div class="text" id="Guwahati ">Loading...</div>
+</div>
+
+
+<div class="slide">
+  <img src="https://www.travelffeine.com/wp-content/uploads/2020/05/main-market-square-with-basilica-scaled.jpg" style="width:100%">
+  <div class="text" id="Krakow, Poland ">Loading...</div>
+</div>
+
+ 
+<div class="slide">
+  <img src="https://th.bing.com/th/id/R.523749394f108e194c11d914e9b1362a?rik=O843UqkhPC1Glw&riu=http%3a%2f%2fwww.orangesmile.com%2fextreme%2fimg%2fmain%2fdamascus_2.jpg&ehk=tX%2fFtC%2bJdiMtaeRW7AMXoqMnPmdrgK69D01M64cHOew%3d&risl=&pid=ImgRaw&r=0" style="width:100%">
+  <div class="text" id="Damascus, Syria">Loading...</div>
+</div>
+
+<div class="slide">
+  <img src="https://th.bing.com/th/id/OIP.UEASofstzJKq3SRuMxTa-QHaE8?rs=1&pid=ImgDetMain" style="width:100%">
+  <div class="text" id="Giza, Egypt ">Loading...</div>
+</div>
+
+
+</div>
+<input type="text" id="cityName" placeholder="Enter city name" class="input-box">
+<script>
+    
+const time = new Date().getHours();
+if (time >= 6 && time < 16) {
+    document.body.style.backgroundImage = 'url("c:/Users/Mukil/Downloads/noon sky (2) (2).jpg")';
+} else if (time >= 16 && time < 19) {
+    document.body.style.backgroundImage = 'url("c:/Users/Mukil/Downloads/depositphotos_582319764-stock-photo-summer-evening-stormy-sky (1).jpg")';
+} else {
+    document.body.style.backgroundImage = 'url("c:/Users/Mukil/Downloads/pexels-pixabay-414727 (1).jpg")';
+}
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    const params = new URLSearchParams(window.location.search);
+    const encodedCityName = params.get('city');
+    const cityNameInput = document.getElementById('cityName');
+
+    if (encodedCityName) {
+        const cityName = decodeURIComponent(encodedCityName);
+        cityNameInput.value = cityName; // Set the value of the input box
+    } else {
+        console.error('City name not found in URL parameters.');
+    }
+});
+
+
+
+const apiKey = "dc598ca12a174f56fd171c2a3d045e3c"; 
+// Define city mappings
+const religiousCities = {
+  'varanasi': 'Varanasi, IN',
+  jerusalem: 'Jerusalem, IL',
+  mecca: 'Mecca, SA',
+  vatican: 'Vatican City, VA',
+  bodhgaya: 'Bodh Gaya, IN',
+  amritsar: 'Amritsar, IN',
+ 'Safed, Israel':'Safed, Israel',
+  'Lourdes, France':'Lourdes, France',
+  'Rishikesh, India ':'Rishikesh, India' ,
+ 'Gaya, India': 'Gaya, India',
+  tirupati: 'Tirupati, IN',
+  pushkar: 'Pushkar, IN',
+  'Assisi, Italy': 'Assisi, Italy',
+ 'Bethlehem, Pennsylvania': 'Bethlehem, Pennsylvania',
+  'Fatima, Portugal':'Fatima, Portugal',
+  kushinagar: 'Kushinagar, IN'
+};
+
+
+const populationCities = {
+  tokyo: 'Tokyo,JP',
+  delhi: 'Delhi,IN',
+  shanghai: 'Shanghai,CN',
+  cairo: 'Cairo,EG',
+  'mexico-city': 'Mexico City,MX',
+  mumbai: 'Mumbai,IN',
+  beijing: 'Beijing,CN',
+  dhaka: 'Dhaka,BD',
+  osaka: 'Osaka,JP',
+  'Karachi, Pakistan': 'Karachi,PK'
+};
+
+
+const culturalCities = {
+  rome: 'Rome, IT',
+  paris: 'Paris, FR',
+  london: 'London, GB',
+  'new-york': 'New York, US',
+  istanbul: 'Istanbul, TR',
+  berlin: 'Berlin, DE',
+  kyoto: 'Kyoto, JP',
+  'Moscow, Russia': 'Moscow, Russia', 
+  'Rio de Janeiro, Brazil': 'Rio de Janeiro, Brazil', 
+  'Barcelona, Spain': 'Barcelona, Spain',
+  'Prague, Czech Republic': 'Prague, Czech Republic' 
+};
+
+const financialCities = {
+  'London, UK': 'London, UK',
+  'Hong Kong, China': 'Hong Kong, CN',
+  Singapore: 'Singapore',
+  'Frankfurt, Germany': 'Frankfurt, DE', 
+  'Zurich, Switzerland': 'Zurich, CH', 
+  'Dubai, UAE': 'Dubai, AE', 
+  'San Francisco, USA': 'San Francisco, US', 
+  'Toronto, Canada': 'Toronto, CA', 
+  'Chicago, USA': 'Chicago, US', 
+  Seoul: 'Seoul, KR', 
+  Boston: 'Boston, US', 
+  'Amsterdam, Netherlands': 'Amsterdam, NL' 
+};
+const historicalCities = {
+  'Athens, Greece':'Athens, Greece',
+  'Babylon, Iraq':'Babylon, Iraq',
+  'Petra, Jordan':'Petra, Jordan',
+ 
+  'Pune':'Pune',
+'Ranchi':'Ranchi',
+    'Fez, Morocco ':'Fez, Morocco',
+  'Madurai':'Madurai',
+'Timbuktu, Mali':'Timbuktu, Mali',
+     'Guwahati ': 'Guwahati ',
+  'Krakow, Poland ':'Krakow, Poland' ,
+  'Damascus, Syria':'Damascus, Syria',   
+  'Giza, Egypt ':'Giza, Egypt '
+
+
+ 
+
+
+
+
+};
+
+
+const fetchWeatherData = async (cityId, cityName) => {
+  try {
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(cityName)}&appid=dc598ca12a174f56fd171c2a3d045e3c&units=metric`);
+    if(!response.ok) {
+      throw new Error('Weather data not available');
+    }
+    const data = await response.json();
+    document.getElementById(cityId).innerHTML = `
+      ${cityName}<br>
+      Temperature: ${data.main.temp}°C/${convertToImperial(data.main.temp)}°F<br>
+      Weather Condition: ${data.weather[0].description}<br>
+  Humidity: ${data.main.humidity}%<br>
+  
+ 
+  Wind Speed: ${data.wind.speed} m/s/${convertToImperialSpeed(data.wind.speed)} mph<br>
+  Feels Like: ${data.main.feels_like}°C/${convertToImperial(data.main.feels_like)}°F<br>
+ 
+    `;
+  } catch (error) {
+    console.error('Error fetching weather data:', error);
+    document.getElementById(cityId).innerHTML =` Weather data unavailable`;
+  }
+};
+function convertToImperial(celsius) {
+    return ((celsius * 9/5) + 32).toFixed(2);
+  }
+  function convertToImperialSpeed(metersPerSecond) {
+    return (metersPerSecond * 2.237).toFixed(2);
+  }
+ 
+const fetchWeatherForCities = (cityObject) => {
+  for (const cityId in cityObject) {
+    fetchWeatherData(cityId, cityObject[cityId]);
+  }
+};
+
+
+fetchWeatherForCities(religiousCities);
+fetchWeatherForCities(populationCities);
+fetchWeatherForCities(culturalCities);
+fetchWeatherForCities(financialCities);
+fetchWeatherForCities(historicalCities);
+
+
+let slideIndexReligious = 0;
+let slideIndexPopulation = 0;
+let slideIndexCultural = 0;
+let slideIndexFinancial = 0;
+let slideIndexHistorical = 0;
+
+
+function showSlides(n, containerId) {
+  let slides = document.getElementById(containerId).getElementsByClassName("slide");
+  let slideIndex;
+
+  switch (containerId) {
+    case 'religiousCities':
+      slideIndex = slideIndexReligious;
+      
+      break;
+    case 'populationCities':
+      slideIndex = slideIndexPopulation;
+      break;
+    case 'culturalCities':
+      slideIndex = slideIndexCultural;
+      break;
+    case 'financialCities':
+      slideIndex = slideIndexFinancial;
+      break;
+      case 'historicalCities':
+      slideIndex = slideIndexHistorical;
+      break;
+    default:
+      slideIndex = 0;
+  }
+
+  slideIndex += n;
+
+  if (slideIndex >= slides.length) {
+    slideIndex = 0;
+  }
+  if (slideIndex < 0) {
+    slideIndex = slides.length - 1;
+  }
+
+
+
+switch (containerId) {
+    case 'religiousCities':
+      slideIndexReligious = slideIndex;
+    
+      break;
+    case 'populationCities':
+      slideIndexPopulation = slideIndex;
+      
+      break;
+    case 'culturalCities':
+      slideIndexCultural = slideIndex;
+      break;
+    case 'financialCities':
+      slideIndexFinancial = slideIndex;
+      break;
+      case 'historicalCities':
+      slideIndexHistorical= slideIndex;
+      break;
+    default:
+      slideIndex = 0;
+  }
+ 
+function showSlide(slides, slideIndex) {
+  for (let i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";
+  }
+  slides[slideIndex].style.display = "block";
+
+
+}
+
+
+}
+
+      
+function goBack1() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName'); 
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'HOURLY.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack14() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName'); 
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'pastweather.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack12() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName'); 
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'marine.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack15() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName');
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'map.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack19() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName'); 
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'Daily.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack191() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName'); 
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'air.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack192() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName'); 
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'weather dashboard.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        const slideshowContainer = document.getElementById('religiousCities');
+  let scrollAmount = 0;
+
+  function autoScroll() {
+    if (scrollAmount >= slideshowContainer.scrollWidth - slideshowContainer.clientWidth) {
+      scrollAmount = 0;
+    } else {
+      scrollAmount += 1;
+    }
+    slideshowContainer.scrollLeft = scrollAmount;
+  }
+
+  setInterval(autoScroll, 20);
+  
+const slideshowContainer1 = document.getElementById('populationCities');
+  let scrollAmount1 = 0;
+
+  function autoScroll1() {
+    if (scrollAmount >= slideshowContainer1.scrollWidth - slideshowContainer1.clientWidth) {
+      scrollAmount1 = 0;
+    } else {
+      scrollAmount1 += 1;
+    }
+    slideshowContainer1.scrollLeft = scrollAmount1;
+  }
+
+  setInterval(autoScroll1, 20);
+  const slideshowContainer2 = document.getElementById('culturalCities');
+  let scrollAmount2 = 0;
+
+  function autoScroll2() {
+    if (scrollAmount >= slideshowContainer2.scrollWidth - slideshowContainer2.clientWidth) {
+      scrollAmount2 = 0;
+    } else {
+      scrollAmount2 += 1;
+    }
+    slideshowContainer2.scrollLeft = scrollAmount2;
+  }
+
+  setInterval(autoScroll2, 20);
+  
+  
+  const slideshowContainer3 = document.getElementById('historicalkCities');
+  let scrollAmount3 = 0;
+
+  function autoScroll3() {
+    if (scrollAmount >= slideshowContainer3.scrollWidth - slideshowContainer3.clientWidth) {
+      scrollAmount3 = 0;
+    } else {
+      scrollAmount3 += 1;
+    }
+    slideshowContainer3.scrollLeft = scrollAmount3;
+  }
+
+  setInterval(autoScroll3, 20);
+  const slideshowContainer4 = document.getElementById('financialCities');
+  let scrollAmount4 = 0;
+
+  function autoScroll4() {
+    if (scrollAmount >= slideshowContainer4.scrollWidth - slideshowContainer4.clientWidth) {
+      scrollAmount4 = 0;
+    } else {
+      scrollAmount4 += 1;
+    }
+    slideshowContainer4.scrollLeft = scrollAmount4;
+  }
+
+  setInterval(autoScroll4, 20);
+    
+</script>
+
+</body>
+</html>
