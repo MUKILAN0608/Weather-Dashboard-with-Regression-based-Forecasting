@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="website icon" type="png" href="c:\Users\Mukil\Downloads\logo-removebg-preview.png">
+    <title>Weather Dashboard</title>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e1e1e, #111);
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+           
+            background-color: rgba(0, 0, 0, 0);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .modal-content {
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 400px;
+            margin: 15% auto;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            position: relative;
+            animation: slideIn 0.5s ease-in-out;
+            background-color:#111;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        #input {
+            width: calc(100% - 40px);
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #444;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+            background-color: #333;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        #input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        #searchButton {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        #searchButton:hover {
+            background: linear-gradient(135deg, #45a049, #4CAF50);
+        }
+
+        #errorMessage {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #f44336;
+            color: white;
+            text-align: center;
+            padding: 15px 30px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            animation: fadeInOut 3s ease-in-out;
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #f44336, #e53935);
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .voice-button {
+            padding: 0;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 10px;
+            position: relative;
+            top: 20px;
+        }
+
+        .voice-button:hover {
+            background: linear-gradient(135deg, #45a049, #4CAF50);
+        }
+
+        .clickable-text {
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .popup12 {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 105%;
+            transform: translateY(-50%);
+            width: 200px;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .popup-content1 {
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <h2>Welcome to Weather Dashboard</h2>
+            <p>The Ultimate Weather Guide For You<br><br>Enter Your Current City Location</p>
+            <input type="text" id="input" placeholder="Enter city name">
+            <button id="searchButton" onclick="validateCityName()">Search</button>
+            <div class="clickable-text" onmouseover="showPopup('mp')" onmouseout="hidePopup('mp')">
+                <div id="voiceSearchButtonPopup" class="voice-button" onclick="startVoiceRecognition('input')">
+                    <img src="c:/Users/Mukil/Downloads/pngtree-vector-microphone-icon-png-image_4013734-removebg-preview.png" alt="microphone" style="width: 100%; height: 100%;">
+                </div>
+                <div id="mp" class="popup12" onmouseover="clearTimeout(popupTimeout)" onmouseout="hidePopup('mp')">
+                    <div class="popup-content1">
+                        <p>Welcome to our voice search feature. Make sure you pronounce the city name properly, this feature works accurately around 80% in fetching the city name.</p>
+                    </div>
+                </div>
+            </div>
+            <p id="errorMessage"></p>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">
+        <p id="notificationMessage"></p>
+    </div>
+    
+    <script>
+       const ApiKey = "36b3e04a424745f6b12a3bcf00e54769";
+const defaultCity = ""; 
+
+window.onload = function() {
+    showCityInputPopup();
+    if (defaultCity) {
+        getDefaultCityWeather();
+    }
+};
+
+function startVoiceRecognition(inputId) {
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.interimResults = true;
+
+        recognition.onresult = function(event) {
+            const last = event.results.length - 1;
+            let command = event.results[last][0].transcript.trim();
+            if (command.endsWith(".")) {
+                command = command.slice(0, -1);
+            }
+            document.getElementById(inputId).value = command;
+            fetchCity(command);
+        };
+
+        recognition.start();
+    } else {
+        alert('Speech recognition is not supported in your browser. Please use Chrome or Edge.');
+    }
+}
+
+function showCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "block";
+}
+
+function closeCityInputPopup() {
+    const popup = document.getElementById("myModal");
+    popup.style.display = "none";
+}
+
+function showNotification(message, type = 'error') {
+    const notification = document.getElementById("notification");
+    const notificationMessage = document.getElementById("notificationMessage");
+    notificationMessage.textContent = message;
+    notification.className = `notification ${type}`;
+    notification.style.display = 'block';
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 3000);
+}
+
+function validateCityName() {
+    const cityInput = document.getElementById("input").value;
+    if (cityInput.trim() !== "") {
+        fetchCity(cityInput);
+    } else {
+        document.getElementById("errorMessage").innerText = "Please enter a city name.";
+    }
+}
+
+function fetchCity(city) {
+    if (!city) {
+        showNotification("Please enter a city name.", 'error');
+        return;
+    }
+
+    getWeatherData(city)
+        .then(data => {
+            showNotification(`Weather data for ${city} retrieved successfully.`, 'success');
+            setTimeout(() => {
+                closeCityInputPopup();
+                redirectToWeatherDashboard(city);
+            }, 3000);
+        })
+        .catch(error => {
+            if (error.message === 'City not found') {
+                showNotification("City not found. Please enter a valid city name.", 'error');
+            } else {
+                showNotification("Error retrieving weather data. Please try again later.", 'error');
+            }
+        });
+}
+
+function getWeatherData(city) {
+    const URL = 'https://api.openweathermap.org/data/2.5/weather';
+    const Full_url = `${URL}?q=${city}&appid=${ApiKey}&units=metric`; 
+    return fetch(Full_url)
+        .then(response => {
+            if (!response.ok && response.status === 404) {
+                throw new Error('City not found');
+            } else if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        });
+}
+
+function redirectToWeatherDashboard(city) {
+    const encodedCityName = encodeURIComponent(city);
+    window.location.href = `weather dashboard.html?city=${encodedCityName}`;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("input").addEventListener("keypress", function(event) {
+        if (event.key === 'Enter') {
+            validateCityName();
+        }
+    });
+
+
+        const time = new Date().getHours();
+        if (time >= 6 && time < 16) {
+            document.body.style.backgroundImage = 'url("c:/Users/Mukil/Downloads/noon sky (2) (2).jpg")';
+        } else if (time >= 16 && time < 19) {
+            document.body.style.backgroundImage = 'url("c:/Users/Mukil/Downloads/depositphotos_582319764-stock-photo-summer-evening-stormy-sky (1).jpg")';
+        } else {
+            document.body.style.backgroundImage = 'url("c:/Users/Mukil/Downloads/pexels-pixabay-414727 (1).jpg")';
+        }
+});
+        let popupTimeout;
+
+        function showPopup(id) {
+            clearTimeout(popupTimeout);
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function hidePopup(id) {
+            popupTimeout = setTimeout(function() {
+                document.getElementById(id).style.display = 'none';
+            }, 500);
+        }
+    </script>
+</body>
+</html>
