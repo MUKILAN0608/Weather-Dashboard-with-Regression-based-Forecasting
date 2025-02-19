@@ -1,0 +1,673 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather History</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav>
+        <ul class="menu">
+            
+         
+          
+            
+        
+                <li class="menu-item">
+                    <a>
+                        <button onclick="goBack10()">CURRENT WEATHER </button>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a>
+                        <button onclick="goBack15()">WEATHER MAP </button>
+                    </a>
+                </li>
+            <li class="menu-item dropdown">
+                <a href="#" class="dropdown-toggle">FUTURE FORECAST</a>
+                <ul class="dropdown-menu">
+                    <li><button onclick="goBack11()">HOURLY</button></li>
+                    <li><a><button onclick="goBack19()" id="hourlyButton">DAILY</button></a></li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <a><button onclick="goBack144()" id="api">WEATHER ON MAJOR CITIES</button></a>
+              </li>
+            
+            <li class="menu-item">
+                <a>
+                    <button onclick="goBack13()">AIR POLLUTION INDEX</button>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a>
+                    <button onclick="goBack12()">MARINE WEATHER REPORT</button>
+                </a>
+            </li>
+            
+            
+            
+            
+    
+    </nav>
+        <div id="weather-info" class="weather-info">
+          
+            <input type="text" id="city-input" placeholder="Enter city name" />
+            <button id="search-btn">Search</button>
+            <div id="voiceSearchButtonPopup" class="voice-button" onclick="startVoiceRecognition('input')">
+                <img src="c:/Users/Mukil/Downloads/pngtree-vector-microphone-icon-png-image_4013734-removebg-preview.png" alt="microphone" style="width: 100%; height: 100%;">
+            </div>
+        </div>
+        <div id="historical" style="color:rgb(23, 25, 28);">
+           
+            <center>
+            <div id="historical-container" class="flex-container"></div>
+        </center>
+        <div>
+            <select id="layer-select">
+                <option value="temp">Temperature</option>
+                <option value="humidity">Humidity</option>
+                <option value="wind">Wind Speed</option>
+                <option value="rain">Rainfall</option>
+            </select>
+            <div class="toggle">
+                <button id="toggleUnitBtn">Toggle Celsius/Fahrenheit</button>
+            </div>
+        </div>
+       
+            <canvas id="weatherChart" width="400" height="200"></canvas>
+           
+        
+        </div>
+    </div>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            padding-top: 5px;
+        }
+        nav {
+    position: fixed;
+    top: 1px; 
+    left: 10px; 
+    right: 10px;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    border-radius: 15px; 
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1000;
+    border: 2px solid transparent;
+    animation: neon 1.5s infinite alternate;
+    font-size: 12px; 
+}
+.menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+    
+        .menu-item {
+            position: relative;
+            margin: 0 10px;
+        }
+    
+        .menu-item a, .dropdown-menu a, .dropdown-menu button {
+            display: block;
+            color: #007bff;
+            text-align: center;
+            background-color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1em;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 5px;
+            border: 2px solid transparent;
+        }
+    
+        .menu-item a:hover, .dropdown-menu a:hover, .dropdown-menu button:hover {
+            color: white;
+            background-color: #007bff;
+          
+            transform: scale(1.05);
+           
+            border-color: #007bff;
+            border-radius: 25px;
+        }
+    
+        .menu-item a button {
+            all: unset;
+            cursor: pointer;
+        }
+    
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: white;
+            top: 100%;
+            left: 0;
+            min-width: 150px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    
+        .dropdown-menu li {
+            padding: 0;
+            margin: 0;
+        }
+    
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+@keyframes neon {
+    0% {
+        box-shadow: 0 0 10px white, 0 0 20px white, 0 0 30px white, 0 0 40px white, 0 0 50px white;
+        border-color: white;
+    }
+    100% {
+        box-shadow: 0 0 20px #ffffff, 0 0 30px #ffffff, 0 0 40px #ffffff, 0 0 50px #ffffff, 0 0 60px #ffffff;
+        border-color: #ffffff;
+    }
+}
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+/* Navbar styles */
+.navbar {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-start;
+}
+.menu-item {
+    position: relative;
+}
+.dropdown-toggle1 {
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 15px;
+   
+    color: #1976d2;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+}
+.dropdown-toggle1:hover {
+    background-color: #0056b3;
+}
+.dropdown-menu1 {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: calc(100% - 320px); 
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+    padding: 10px;
+    min-width: 300px;
+    margin-top: 5px;
+}
+.dropdown-menu1.show {
+    display: block;
+}
+.dropdown-menu1 li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.dropdown-menu1 li:last-child {
+    margin-bottom: 0;
+}
+.dropdown-menu1 label {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #333;
+}
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 60px;
+        }
+        .weather-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #city-input {
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 70px; 
+}
+
+#search-btn {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    margin-top: 70px; 
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+
+        #search-btn:hover {
+            background-color: #0056b3;
+        }
+        #historical {
+    margin-top: 20px;
+}
+
+#historical-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center; 
+}
+
+.historical-item {
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 10px;
+    border-radius: 8px;
+    width: calc(16.5% - 20px); 
+    text-align: center;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    margin: 50px; }
+
+
+
+        #layer-select {
+            top: 40px;
+            margin-top: 10px;
+            padding: 8px;
+            background-color: #007BFF;
+            color:white;
+            border: 1px solid white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        select{
+            background-color: #007BFF;
+            color: white;
+        }
+        #layer-select:hover{
+            background-color:#0056b3;
+            color:white;
+        }
+        canvas {
+            background-color: rgba(255, 255, 255, 0.8);
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+        }
+        .toggle {
+            margin-top: 20px;
+        }
+        #toggleUnitBtn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .voice-button {
+    padding: 0;
+    background-color: #007bff;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    display: block;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    position: absolute;
+    top: 70px;
+    left: 880px;
+    z-index: 1; 
+}
+
+.voice-button:hover {
+    background-color: #0056b3;
+}
+    </style>
+    <script>
+         
+         const time = new Date().getHours();
+if (time >= 6 && time < 16) {
+    document.body.style.backgroundImage = 'url("c:/Users/Mukil/Downloads/noon sky (2) (2).jpg")';
+} else if (time >= 16 && time < 19) {
+    document.body.style.backgroundImage = 'url("c:/Users/Mukil/Downloads/depositphotos_582319764-stock-photo-summer-evening-stormy-sky (1).jpg")';
+} else {
+    document.body.style.backgroundImage = 'url("c:/Users/Mukil/Downloads/pexels-pixabay-414727 (1).jpg")';
+}   
+window.onload = async function() {
+    const params = new URLSearchParams(window.location.search);
+    const encodedCityName = params.get('city');
+    if (encodedCityName) {
+        const cityName = decodeURIComponent(encodedCityName);
+        document.getElementById('city-input').value = cityName;
+        await fetchHistoricalData(cityName)
+    } else {
+        console.error('City name not found in URL parameters.');
+        
+    }
+};
+
+function startVoiceRecognition(inputId) {
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.interimResults = true;
+        recognition.onresult = function(event) {
+            const last = event.results.length - 1;
+            let command = event.results[last][0].transcript.trim();
+            if (command.endsWith(".")) {
+                command = command.slice(0, -1);
+            }
+            document.getElementById('city-input').value = command;
+           fetchHistoricalData(command)
+        };
+        recognition.start();
+    } else {
+        alert('Speech recognition is not supported in your browser. Please use Chrome or Edge.');
+    }
+}
+
+    const weatherApiKey = "867d51f06cc24c1783a82226240209";  
+    let weatherChart;
+    let chartType = 'temp';
+    let labels = [];
+    let tempData = [];
+    let humidityData = [];
+    let windData = [];
+    let rainData = [];
+   
+    let currentUnit = localStorage.getItem('weatherUnit') || 'C';
+    document.getElementById('search-btn').addEventListener('click', () => {
+        const city = document.getElementById('city-input').value;
+        if (city) {
+            fetchHistoricalData(city);
+        }
+    });
+    document.getElementById('layer-select').addEventListener('change', (event) => {
+        chartType = event.target.value;
+        switch (chartType) {
+            case 'temp':
+                updateChart(labels, tempData, chartType);
+                break;
+            case 'humidity':
+                updateChart(labels, humidityData, chartType);
+                break;
+            case 'wind':
+                updateChart(labels, windData, chartType);
+                break;
+            case 'rain':
+                updateChart(labels, rainData, chartType);
+                break;
+        }
+    });
+    
+    const toggleUnitBtn = document.getElementById('toggleUnitBtn');
+    
+    toggleUnitBtn.addEventListener('click', async function() {
+      
+        currentUnit = currentUnit === 'C' ? 'F' : 'C';
+        
+       
+        localStorage.setItem('weatherUnit', currentUnit);
+        
+       
+        toggleUnitBtn.textContent = `Toggle Unit (${currentUnit})`;
+       
+        const city = document.getElementById('city-input').value;
+        await fetchHistoricalData(city);
+        
+        updateChart(labels, getDataForChart(chartType), chartType);
+    });
+    async function fetchHistoricalData(city) {
+        try {
+            const historicalContainer = document.getElementById('historical-container');
+            historicalContainer.innerHTML = '';
+            labels = [];
+            tempData = [];
+            humidityData = [];
+            windData = [];
+            rainData = [];
+            const promises = [];
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const formattedDate = date.toISOString().split('T')[0];
+                const url = `https://api.weatherapi.com/v1/history.json?key=${weatherApiKey}&q=${city}&dt=${formattedDate}`;
+                promises.push(fetch(url).then(response => response.json()));
+            }
+            const dataArray = await Promise.all(promises);
+            dataArray.forEach(data => {
+                if (data.forecast && data.forecast.forecastday && data.forecast.forecastday.length > 0) {
+                    const forecast = data.forecast.forecastday[0];
+                    const date = forecast.date;
+                    const tempC = forecast.day.avgtemp_c;
+                    const tempF = forecast.day.avgtemp_f;
+                    const humidity = forecast.day.avghumidity;
+                    const windKph = forecast.day.maxwind_kph;
+                    const windMph = forecast.day.maxwind_mph;
+                    const rain = forecast.day.totalprecip_mm;
+                    const conditionText = forecast.day.condition.text;
+                    const conditionIcon = forecast.day.condition.icon;
+                    labels.push(date);
+                    tempData.push(currentUnit === 'C' ? tempC : tempF); 
+                    humidityData.push(humidity);
+                    windData.push(windKph);
+                    rainData.push(rain);
+                    const historicalItem = document.createElement('div');
+                    historicalItem.classList.add('historical-item');
+                    historicalItem.innerHTML = `
+                        <p><strong>${date}</strong></p>
+                        <p>Temperature: ${tempC}°C / ${tempF}°F</p>
+                        <p>Humidity: ${humidity}%</p>
+                        <p>Wind Speed: ${windKph} kph / ${windMph} mph</p>
+                        <p>Rainfall: ${rain} mm</p>
+                        <p>Condition: ${conditionText}</p>
+                        <img src="https:${conditionIcon}" alt="${conditionText}">
+                    `;
+                    historicalContainer.appendChild(historicalItem);
+                } else {
+                    console.error('Invalid data format:', data);
+                }
+            });
+           
+            updateChart(labels, getDataForChart(chartType), chartType);
+        } catch (error) {
+            console.error('Error fetching historical data:', error);
+        }
+    }
+    
+    function getDataForChart(chartType) {
+        switch (chartType) {
+            case 'temp':
+                return tempData;
+            case 'humidity':
+                return humidityData;
+            case 'wind':
+                return windData;
+            case 'rain':
+                return rainData;
+            default:
+                return [];
+        }
+    }
+    function updateChart(labels, data, chartType) {
+        const ctx = document.getElementById('weatherChart').getContext('2d');
+       
+        const destroyChart = () => {
+            if (weatherChart) {
+                weatherChart.destroy();
+            }
+        };
+       
+        const createOrUpdateChart = (label, borderColor, backgroundColor) => {
+            weatherChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        borderColor: borderColor,
+                        backgroundColor: backgroundColor,
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: label
+                            }
+                        }
+                    }
+                }
+            });
+        };
+      
+        let label = '';
+        let borderColor = '';
+        let backgroundColor = '';
+        switch (chartType) {
+            case 'temp':
+                label = `Average Temperature (${currentUnit})`;
+                borderColor = 'rgba(255, 99, 132, 1)';
+                backgroundColor = 'rgba(255, 99, 132, 0.2)';
+                break;
+            case 'humidity':
+                label = 'Average Humidity (%)';
+                borderColor = 'rgba(54, 162, 235, 1)';
+                backgroundColor = 'rgba(54, 162, 235, 0.2)';
+                break;
+            case 'wind':
+                label = 'Average Wind Speed (kph)';
+                borderColor = 'rgba(255, 159, 64, 1)';
+                backgroundColor = 'rgba(255, 159, 64, 0.2)';
+                break;
+            case 'rain':
+                label = 'Average Rainfall (mm)';
+                borderColor = 'rgba(153, 102, 255, 1)';
+                backgroundColor = 'rgba(153, 102, 255, 0.2)';
+                break;
+            default:
+                
+                break;
+        }
+     
+        destroyChart(); 
+        createOrUpdateChart(label, borderColor, backgroundColor);
+    }
+   
+    toggleUnitBtn.textContent = `Toggle Unit (${currentUnit})`;
+    function goBack10() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input');
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'weather dashboard.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack11() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input');
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'HOURLY.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack12() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input');
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'marine.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack13() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input');
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'air.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack15() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'map.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack19() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'Daily.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack144() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('city-input'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'major.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+     
+    </script>
+</body>
+</html>
