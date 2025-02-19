@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marine Weather Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<style>
+body {
+    margin: 0;
+            font-family: Arial, sans-serif;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            padding-top: 5px;
+}
+#chartContainer {
+            position: absolute;
+            top: 290px;
+            right: 20px;
+            width: 300px;
+            height: 200px;
+            background:rgba(255, 255, 255, 0.5);;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+           
+            padding: 10px;
+        }
+        #waveHeightChart {
+            width: 100%;
+            height: 100%;
+        }
+  nav {
+    position: fixed;
+    top: 1px; 
+    left: 10px; 
+    right: 10px; 
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    border-radius: 15px; 
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1000;
+    border: 2px solid transparent;
+    animation: neon 1.5s infinite alternate;
+    font-size: 12px; 
+}
+.menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+    
+        .menu-item {
+            position: relative;
+            margin: 0 10px;
+        }
+    
+        .menu-item a, .dropdown-menu a, .dropdown-menu button {
+            display: block;
+            color: #007bff;
+            text-align: center;
+            background-color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1em;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 5px;
+            border: 2px solid transparent;
+        }
+    
+        .menu-item a:hover, .dropdown-menu a:hover, .dropdown-menu button:hover {
+            color: white;
+            background-color: #007bff;
+          
+            transform: scale(1.05);
+           
+            border-color: #007bff;
+            border-radius: 25px; 
+        }
+    
+        .menu-item a button {
+            all: unset;
+            cursor: pointer;
+        }
+    
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: white;
+            top: 100%;
+            left: 0;
+            min-width: 150px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    
+        .dropdown-menu li {
+            padding: 0;
+            margin: 0;
+        }
+    
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+@keyframes neon {
+    0% {
+        box-shadow: 0 0 10px white, 0 0 20px white, 0 0 30px white, 0 0 40px white, 0 0 50px white;
+        border-color: white;
+    }
+    100% {
+        box-shadow: 0 0 20px #ffffff, 0 0 30px #ffffff, 0 0 40px #ffffff, 0 0 50px #ffffff, 0 0 60px #ffffff;
+        border-color: #ffffff;
+    }
+}
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+/* Navbar styles */
+.navbar {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-start;
+}
+.menu-item {
+    position: relative;
+}
+.dropdown-toggle1 {
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 15px;
+   
+    color: #1976d2;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+}
+.dropdown-toggle1:hover {
+    background-color: #0056b3;
+}
+.dropdown-menu1 {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: calc(100% - 320px); 
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+    padding: 10px;
+    min-width: 300px;
+    margin-top: 5px;
+}
+.dropdown-menu1.show {
+    display: block;
+}
+.dropdown-menu1 li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.dropdown-menu1 li:last-child {
+    margin-bottom: 0;
+}
+.dropdown-menu1 label {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #333;
+}
+.select-box {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #fff;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+}
+.select-box:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+.select-box option {
+    padding: 8px;
+}
+/* Switch toggle styles */
+.slider-container {
+            position: relative;
+            width: 150px;
+            height: 40px;
+            top: 30px;
+           
+            left: 10px;
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        .slider-button {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #666;
+            font-weight: bold;
+            transition: color 0.3s ease;
+            z-index: 2;
+        }
+
+        .slider-button:hover {
+            color: #007bff;
+        }
+
+        .slider {
+            position: absolute;
+            top: 3px;
+            bottom: 3px;
+            width: 50%;
+            background-color: #007bff;
+            border-radius: 17px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        input[type="radio"]#daily:checked ~ .slider {
+            transform: translateX(100%);
+        }
+
+        input[type="radio"]#hourly:checked ~ .slider {
+            transform: translateX(0%);
+        }
+
+        input[type="radio"]:checked + .slider-button {
+            color: #fff;
+        }
+        .voice-button {
+    padding: 0;
+    background-color: #007bff;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    display: block;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    position: absolute;
+    top: 73px;
+    left: 960px;
+    z-index: 1; 
+        }
+
+.voice-button:hover {
+    background-color: #0056b3;
+}
+.search-bar {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 80px;
+            z-index: 0;
+        }
+        .search-bar input {
+            padding: 10px;
+            width: 340px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .search-bar button {
+            padding: 10px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .search-bar button:hover {
+            background-color: #0056b3;
+        }
+        .top-bar {
+    position: fixed;
+    top: 70px;
+    left: 90%;
+    width: 10%;
+    background-color:rgba(255, 255, 255, 0.5);
+    color: darkblue;
+    text-align: center;
+    padding: 5px 0;
+    z-index: 900;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    transform: translateX(-50%);
+}
+.top-bar b {
+    margin: 0 5px;
+}    
+.error {
+            position: fixed;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2; 
+            color: #fff;
+            background-color: #dc3545;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+            display: none;
+            width: 300px; 
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .data-wrapper {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .astro-data {
+    flex: 1;
+    text-align: left;
+    padding: 10px;
+    background-color:rgba(255, 255, 255, 0.5);
+    color:darkblue;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    position: absolute;
+    top: 290px; 
+    left: 400px; 
+}
+.weather-data {
+   
+    text-align: left;
+    padding: 10px;
+    color: darkblue;
+    background-color:rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    position: absolute;
+    top: 290px; 
+    left: 700px; 
+}
+
+.tides-container {
+    flex: 1;
+    text-align: left;
+    padding: 20px;
+    background-color:rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    color:darkblue;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    position: absolute;
+right: 190px; 
+    top: 560px; 
+}
+
+        .weather-data img {
+            vertical-align: middle;
+        }
+
+        .weather-data p, .weather-data ul, .astro-data p, .astro-data ul, .tides-container p, .tides-container ul {
+            margin: 8px 0;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .weather-data ul, .astro-data ul, .tides-container ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .weather-data ul li, .astro-data ul li, .tides-container ul li {
+            background: #fff;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            padding: 6px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.05);
+        }
+
+        #moon-image {
+            width: 100px; 
+            height: auto;
+        }
+        #windy-map-container {
+      position: fixed;
+      top: 60px; 
+      right: 1097px;
+      width: 390px;
+      height: 669px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #windy-map {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .hourly-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    max-width: 600px; 
+    margin: 0 auto;
+    padding: 20px;
+    top: 60px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+
+#marineWeatherData {
+    margin-top: 20px; 
+}
+
+.hourly-item {
+    width: 100%;
+    max-width: 600px; 
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.5);
+    color: darkblue;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px; 
+}
+
+.hourly-item img {
+    vertical-align: middle;
+    margin-right: 10px;
+    max-width: 50px; 
+}
+
+.hourly-item .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.hourly-item .details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.detail-item {
+    flex: 1 1 calc(50% - 10px); 
+    min-width: 200px;
+    margin-bottom: 5px;
+}
+
+
+</style>
+<body>
+    <nav>
+        <ul class="menu">
+            
+         
+          
+            
+        
+                <li class="menu-item">
+                    <a>
+                        <button onclick="goBack10()">CURRENT WEATHER </button>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a>
+                        <button onclick="goBack15()">WEATHER MAP </button>
+                    </a>
+                </li>
+            <li class="menu-item dropdown">
+                <a href="#" class="dropdown-toggle">FUTURE FORECAST</a>
+                <ul class="dropdown-menu">
+                    <li><button onclick="goBack1()">HOURLY</button></li>
+                    <li><a><button onclick="goBack19()" id="hourlyButton">DAILY</button></a></li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <a><button onclick="goBack144()" id="api">WEATHER ON MAJOR CITIES</button></a>
+              </li>
+            <li class="menu-item">
+            <a><button onclick="goBack14()" id="api">WEATHER HISTORY</button></a>
+        </li>
+            <li class="menu-item">
+                <a>
+                    <button onclick="goBack12()">AIR POLLUTION INDEX</button>
+                </a>
+            </li>
+            
+            
+            
+            
+    
+    </nav>
+    <center>
+    <div class="search-bar">
+        <form id="locationForm">
+            <input type="text" id="cityName" placeholder="Enter city name" class="input-box">
+            <button onclick="fetchCityFromSearch()" class="button" id="submit">Search</button>
+   
+        
+    
+        <div id="voiceSearchButtonPopup" class="voice-button" onclick="startVoiceRecognition('input')">
+            <img src="c:/Users/Mukil/Downloads/pngtree-vector-microphone-icon-png-image_4013734-removebg-preview.png" alt="microphone" style="width: 100%; height: 100%;">
+        </div>
+    </form>
+        <div class="top-bar">
+          
+                <b><p>CITY: <span id="cityNameDisplay"></span></p></b>
+                <b><p>TIME: <span id="time"></span></p></b>
+               
+            </div>
+      
+      
+    <div id="notification" class="error"></div>
+           
+            
+            </div>
+        </div>
+    <div class="slider-container">
+       
+        <input type="radio" name="slider" id="hourly" checked>
+        <label for="hourly" class="slider-button">Hourly</label>
+        <input type="radio" name="slider" id="daily">
+        <label for="daily" class="slider-button">Daily</label>
+        
+        <div class="slider"></div>
+    </div>
+    <div class="weather-data" id="weatherData">
+    
+    </div>
+   <div class="data-wrapper">
+        <div class="astro-data" id="astroData">
+          
+          
+            
+        </div> 
+        <div class="tides-container" id="tidesData">
+           
+        </div>
+    </div>
+</center>
+<div id="windy-map-container">
+    <iframe id="windy-map" src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=5&overlay=currents&product=cmems&level=surface&lat=25.707&lon=85.154&message=true" frameborder="0"></iframe>
+  </div>
+  <center>
+ 
+  <div id="hourlyData" class="hourly-container"></div>
+  <div id="marineWeatherData"></div>
+  <div id="chartContainer">
+      <canvas id="waveHeightChart"></canvas>
+  </div>
+</center>
+    <script>
+               
+const time = new Date().getHours();
+if (time >= 6 && time < 16) {
+    document.body.style.backgroundImage = 'url("c:/Users/Mukil/Downloads/noon sky (2) (2).jpg")';
+} else if (time >= 16 && time < 19) {
+    document.body.style.backgroundImage = 'url("c:/Users/Mukil/Downloads/depositphotos_582319764-stock-photo-summer-evening-stormy-sky (1).jpg")';
+} else {
+    document.body.style.backgroundImage = 'url("c:/Users/Mukil/Downloads/pexels-pixabay-414727 (1).jpg")';
+}
+const openWeatherAPIKey = '36b3e04a424745f6b12a3bcf00e54769';
+        const timeZoneDBAPIKey = 'XB6EHS2NKPG6';
+       
+        window.onload = async function() {
+    const params = new URLSearchParams(window.location.search);
+    const encodedCityName = params.get('city');
+    if (encodedCityName) {
+        const cityName = decodeURIComponent(encodedCityName);
+        document.getElementById('cityName').value = cityName;
+        await fetchCityFromSearch(cityName); 
+        await fetchMarineWeatherData(cityName)
+        await  fetchWeatherAndMap(cityName);
+        await fetchHourlyMarineWeather(cityName) 
+        await waveMap(cityName)
+    } else {
+        console.error('City name not found in URL parameters.');
+       
+    }
+};
+
+
+
+    
+      
+ 
+
+
+
+        let timeZoneOffset = NaN; 
+        async function getCoordinates(cityName) {
+            try {
+                const response = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${openWeatherAPIKey}`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch coordinates: ${response.statusText}`);
+                }
+                const data = await response.json();
+                if (data.length === 0) {
+                    throw new Error(`Coordinates not found for city: ${cityName}`);
+                }
+                return { lat: data[0].lat, lon: data[0].lon };
+            } catch (error) {
+                console.error('Error in getCoordinates:', error);
+                showNotification(`Error fetching coordinates: ${error.message}`, 'error');
+                throw error; 
+            }
+        }
+
+        async function getTimeZone(lat, lon) {
+            try {
+                const response = await fetch(`https://api.timezonedb.com/v2.1/get-time-zone?key=${timeZoneDBAPIKey}&format=json&by=position&lat=${lat}&lng=${lon}`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch time zone: ${response.statusText}`);
+                }
+                const data = await response.json();
+                if (data.status !== 'OK') {
+                    throw new Error(`Time zone data status not OK: ${JSON.stringify(data)}`);
+                }
+                return data.gmtOffset;
+            } catch (error) {
+                console.error('Error in getTimeZone:', error);
+                showNotification(`Error fetching time zone: ${error.message}`, 'error');
+                throw error; 
+            }
+        }
+
+        function formatDate(date) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString(undefined, options);
+        }
+
+        function updateTime() {
+            if (isNaN(timeZoneOffset)) return;
+            const now = new Date();
+            const localTime = new Date(now.getTime() + timeZoneOffset * 1000);
+            const hours = localTime.getUTCHours(); 
+            const minutes = ('0' + localTime.getUTCMinutes()).slice(-2);
+            const seconds = ('0' + localTime.getUTCSeconds()).slice(-2);
+            const period = hours >= 12 ? 'PM' : 'AM';
+            const timeString = `${hours % 12 || 12}:${minutes}:${seconds} ${period}`;
+            document.getElementById('time').innerText = timeString;
+            
+        }
+
+     
+
+        function showNotification(message, type) {
+            const notificationElement = document.getElementById('notification');
+            notificationElement.textContent = message;
+            notificationElement.style.display = 'block';
+            setTimeout(() => {
+                notificationElement.style.display = 'none';
+            }, 5000); 
+        }
+
+function startVoiceRecognition(inputId) {
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.interimResults = true;
+        recognition.onresult = function(event) {
+            const last = event.results.length - 1;
+            let command = event.results[last][0].transcript.trim();
+            if (command.endsWith(".")) {
+                command = command.slice(0, -1);
+            }
+            document.getElementById('cityName').value = command;
+            fetchCityFromSearch(command)
+             fetchMarineWeatherData(command)
+             fetchWeatherAndMap(command);
+             waveMap(command);
+        };
+        recognition.start();
+    } else {
+        alert('Speech recognition is not supported in your browser. Please use Chrome or Edge.');
+    }
+}
+async function fetchCityFromSearch() {
+            const cityName = document.getElementById('cityName').value.trim();
+            if (!cityName) return;
+
+            document.getElementById('cityNameDisplay').innerText = cityName;
+            
+
+            try {
+                const coordinates = await getCoordinates(cityName);
+                if (!coordinates) return;
+                timeZoneOffset = await getTimeZone(coordinates.lat, coordinates.lon);
+               
+                updateTime();
+                setInterval(updateTime, 1000); 
+               
+            } catch (error) {
+                console.error('Error fetching city data:', error);
+                showNotification(`Error fetching city data: ${error.message}`, 'error');
+               
+            }
+          
+        }
+
+const locationForm = document.getElementById('locationForm');
+
+
+locationForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    const locationInput = document.getElementById('cityName').value.trim();
+    if (locationInput) {
+        fetchMarineWeatherData(locationInput);
+        fetchWeatherAndMap(locationInput);
+    }
+});
+
+        
+function fetchMarineWeatherData(cityName) {
+    const apiKey = '867d51f06cc24c1783a82226240209';
+    const marineApiUrl = `https://api.weatherapi.com/v1/marine.json?key=${apiKey}&q=${cityName}&days=1`;
+    fetchHourlyMarineWeather(cityName) 
+
+    fetch(marineApiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            displayMarineWeatherData(data);
+            displayAstroData(data);
+            displayTidesData(data);
+        })
+        .catch(error => {
+            console.error('Error fetching marine weather data:', error);
+        });
+}
+
+function displayMarineWeatherData(data) {
+    const forecast = data.forecast.forecastday[0];
+    const { date, day } = forecast;
+
+    const weatherDataDiv = document.getElementById('weatherData');
+
+    let weatherHtml = `
+        <h2> Marine Weather Data</h2>
+        <img src="https:${day.condition.icon}" alt="${day.condition.text}">
+        <p><strong>Condition:</strong> ${day.condition.text}</p>
+        <p><strong>Max Temperature:</strong> ${day.maxtemp_c}°C / ${day.maxtemp_f}°F</p>
+        <p><strong>Min Temperature:</strong> ${day.mintemp_c}°C / ${day.mintemp_f}°F</p>
+        <p><strong>Average Temperature:</strong> ${day.avgtemp_c}°C / ${day.avgtemp_f}°F</p>
+        <p><strong>Max Wind Speed:</strong> ${day.maxwind_kph} kph / ${day.maxwind_mph} mph</p>
+        <p><strong>Total Precipitation:</strong> ${day.totalprecip_mm} mm / ${day.totalprecip_in} in</p>
+        <p><strong>Average Visibility:</strong> ${day.avgvis_km} km / ${day.avgvis_miles} miles</p>
+        <p><strong>Average Humidity:</strong> ${day.avghumidity}%</p>
+        <p><strong>UV Index:</strong> ${day.uv}</p>`;
+
+    weatherDataDiv.innerHTML = weatherHtml;
+}
+function displayAstroData(data) {
+                const forecast = data.forecast.forecastday[0];
+                const { astro } = forecast;
+                const astroDataDiv = document.getElementById('astroData');
+                let astroHtml = `
+                    <h2>Astronomy</h2>
+                    <p><strong>Sunrise:</strong> ${astro.sunrise}</p>
+                    <p><strong>Sunset:</strong> ${astro.sunset}</p>
+                    <p><strong>Moonrise:</strong> ${astro.moonrise}</p>
+                    <p><strong>Moonset:</strong> ${astro.moonset}</p>
+                    <p><strong>Moon Phase:</strong> ${astro.moon_phase}</p>
+                   
+                   `;
+                astroDataDiv.innerHTML = astroHtml;
+            }
+            function displayTidesData(data) {
+        const forecast = data.forecast.forecastday[0];
+        const { day } = forecast;
+        const tidesDataDiv = document.getElementById('tidesData');
+        let tidesHtml = '<h2>Tides</h2><ul>';
+        day.tides[0].tide.forEach(tide => {
+            tidesHtml += `<li><strong>Time:</strong> ${tide.tide_time} 
+                <br>
+                <strong>Height:</strong> ${tide.tide_height_mt} m 
+                <br>
+                <strong>Type:</strong> ${tide.tide_type}</li>`;
+        });
+        tidesHtml += '</ul>';
+        tidesDataDiv.innerHTML = tidesHtml;
+    }
+
+
+
+
+
+
+
+function updateSlider() {
+    const hourlyRadio = document.getElementById('hourly');
+    const slider = document.querySelector('.slider');
+
+    if (hourlyRadio.checked) {
+        slider.style.transform = 'translateX(0)';
+    } else {
+        slider.style.transform = 'translateX(100%)';
+    }
+}
+
+async function fetchHourlyMarineWeather(cityName) {
+    const apiKey = '867d51f06cc24c1783a82226240209';
+    const apiUrl = `https://api.weatherapi.com/v1/marine.json?key=${apiKey}&q=${cityName}&hours=24`;
+
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        const hourlyData = data.forecast.forecastday[0]?.hour;
+
+        console.log('Hourly Marine Weather Data:', hourlyData);
+
+        const hourlyContainer = document.getElementById('hourlyData');
+        if (!hourlyContainer) {
+            throw new Error('Hourly data container not found!');
+        }
+        hourlyContainer.innerHTML = '';
+
+        if (hourlyData && hourlyData.length > 0) {
+            hourlyData.forEach(hour => {
+                const time = new Date(hour.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const conditionIcon = `<img src="https:${hour.condition.icon}" alt="${hour.condition.text}" />`;
+                const conditionText = hour.condition.text;
+
+                
+                const hourItem = document.createElement('div');
+                hourItem.classList.add('hourly-item');
+                hourItem.innerHTML = `
+                    <div class="header">
+                        <div>${time}</div>
+                        <div>${conditionIcon} ${conditionText}</div>
+                    </div>
+                    <div class="details">
+                        <div class="detail-item"><strong>Temperature:</strong> ${hour.temp_c}°C / ${hour.temp_f}°F</div>
+                        <div class="detail-item"><strong>Wind:</strong> ${hour.wind_kph} kph / ${hour.wind_mph} mph ${hour.wind_dir}</div>
+                        <div class="detail-item"><strong>Pressure:</strong> ${hour.pressure_mb} mb / ${hour.pressure_in} in</div>
+                        <div class="detail-item"><strong>Precipitation:</strong> ${hour.precip_mm} mm / ${hour.precip_in} in</div>
+                        <div class="detail-item"><strong>Humidity:</strong> ${hour.humidity}%</div>
+                        <div class="detail-item"><strong>Cloud:</strong> ${hour.cloud}%</div>
+                        <div class="detail-item"><strong>Feels Like:</strong> ${hour.feelslike_c}°C / ${hour.feelslike_f}°F</div>
+                        <div class="detail-item"><strong>Heat Index:</strong> ${hour.heatindex_c}°C / ${hour.heatindex_f}°F</div>
+                        <div class="detail-item"><strong>Dew Point:</strong> ${hour.dewpoint_c}°C / ${hour.dewpoint_f}°F</div>
+                        <div class="detail-item"><strong>Visibility:</strong> ${hour.vis_km} km / ${hour.vis_miles} miles</div>
+                        <div class="detail-item"><strong>Gust:</strong> ${hour.gust_kph} kph / ${hour.gust_mph} mph</div>
+                        <div class="detail-item"><strong>Wave Height:</strong> ${hour.sig_ht_mt !== undefined ? hour.sig_ht_mt + ' m' : 'N/A'}</div>
+                        <div class="detail-item"><strong>Swell Height:</strong> ${hour.swell_ht_mt !== undefined ? hour.swell_ht_mt + ' m' : 'N/A'} / ${hour.swell_ht_ft !== undefined ? hour.swell_ht_ft + ' ft' : 'N/A'}</div>
+                        <div class="detail-item"><strong>Swell Direction:</strong> ${hour.swell_dir_16_point ?? 'N/A'} / ${hour.swell_dir ?? 'N/A'}°</div>
+                        <div class="detail-item"><strong>Swell Period:</strong> ${hour.swell_period_secs !== undefined ? hour.swell_period_secs + ' s' : 'N/A'}</div>
+                        <div class="detail-item"><strong>Water Temperature:</strong> ${hour.water_temp_c !== undefined ? hour.water_temp_c + '°C' : 'N/A'} / ${hour.water_temp_f !== undefined ? hour.water_temp_f + '°F' : 'N/A'}</div>
+                    </div>
+                `;
+                hourlyContainer.appendChild(hourItem);
+            });
+        } else {
+            throw new Error('No hourly data available.');
+        }
+
+        
+        const dailyContainer = document.getElementById('dailyData');
+        if (dailyContainer) {
+            dailyContainer.textContent = '';
+        }
+    } catch (error) {
+        console.error('Error fetching hourly marine weather:', error);
+
+        const hourlyContainer = document.getElementById('marineWeatherData');
+        if (hourlyContainer) {
+            hourlyContainer.textContent = `Error fetching hourly marine weather: ${error.message}`;
+        }
+
+        const dailyContainer = document.getElementById('dailyData');
+        if (dailyContainer) {
+            dailyContainer.textContent = '';
+        }
+    }
+}
+async function waveMap(cityName) {
+            const apiKey = '867d51f06cc24c1783a82226240209';
+            const apiUrl = `https://api.weatherapi.com/v1/marine.json?key=${apiKey}&q=${cityName}&hours=24`;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                const hourlyData = data.forecast.forecastday[0]?.hour; 
+
+                console.log('Hourly Marine Weather Data:', hourlyData);
+
+                const hourlyContainer = document.getElementById('marineWeatherData');
+                if (!hourlyContainer) {
+                    throw new Error('Hourly data container not found!');
+                }
+                hourlyContainer.innerHTML = '';
+
+                if (hourlyData && hourlyData.length > 0) {
+                    const waveHeights = [];
+                    const times = [];
+
+                    hourlyData.forEach(hour => {
+                        const hourItem = document.createElement('div');
+                        hourItem.classList.add('hourly-item');
+
+                        const time = new Date(hour.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        const conditionIcon = `<img src="https:${hour.condition.icon}" alt="${hour.condition.text}" />`;
+                        const conditionText = hour.condition.text;
+                        const waveHeight = hour.sig_ht_mt !== undefined ? hour.sig_ht_mt + ' m' : 'N/A';
+
+                        hourItem.innerHTML = `
+                           
+                        `;
+
+                        hourlyContainer.appendChild(hourItem);
+
+                        waveHeights.push(hour.sig_ht_mt !== undefined ? hour.sig_ht_mt : 0);
+                        times.push(time);
+                    });
+
+                   
+                    createWaveHeightChart(times, waveHeights);
+
+                } else {
+                    throw new Error('No hourly data available.');
+                }
+            } catch (error) {
+                console.error('Error fetching hourly marine weather data:', error);
+            }
+        }
+
+      
+        function createWaveHeightChart(times, waveHeights) {
+            const ctx = document.getElementById('waveHeightChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: times,
+                    datasets: [{
+                        label: 'Wave Height (m)',
+                        data: waveHeights,
+                        backgroundColor: 'blue',
+                        borderColor: 'blue',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+
+
+function toggleDataContainers(option) {
+    const astroDataDiv = document.getElementById('astroData');
+    const weatherDataDiv = document.getElementById('weatherData');
+    const tidesDataDiv = document.getElementById('tidesData');
+    const hourlyDataDiv = document.getElementById('hourlyData');
+    const marineWeatherData=document.getElementById('marineWeatherData')
+    
+
+    if (option === 'hourly') {
+        astroDataDiv.style.display = 'none';
+        weatherDataDiv.style.display = 'none';
+       tidesDataDiv.style.display = 'none';
+        hourlyDataDiv.style.display = 'block';
+        marineWeatherData.style.display='none';
+     
+
+        
+        const cityName = document.getElementById('cityInput').value;
+        fetchHourlyMarineWeather(cityName);
+    } else {
+        astroDataDiv.style.display = 'block';
+        weatherDataDiv.style.display = 'block';
+      tidesDataDiv.style.display = 'block';
+        hourlyDataDiv.style.display = 'none';
+        marineWeatherData.style.display='none';
+        
+    }
+
+
+    localStorage.setItem('selectedOption', option);
+}
+
+
+document.querySelectorAll('input[name="slider"]').forEach((input) => {
+    input.addEventListener('change', function() {
+        updateSlider();
+        toggleDataContainers(this.id);
+    });
+});
+
+
+const savedOption = localStorage.getItem('selectedOption');
+if (savedOption) {
+    document.getElementById(savedOption).checked = true;
+} else {
+    document.getElementById('hourly').checked = true;
+}
+updateSlider();
+toggleDataContainers(document.querySelector('input[name="slider"]:checked').id);
+
+async function fetchWeatherAndMap(cityName) {
+            try {
+                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${openWeatherAPIKey}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    const latitude = data.coord.lat;
+                    const longitude = data.coord.lon;
+
+                    const iframe = document.getElementById('windy-map');
+                    iframe.src = `https://embed.windy.com/embed.html?type=map&lat=${latitude}&lon=${longitude}&zoom=5&overlay=currents&message=true`;
+                } else {
+                    throw new Error(`City not found: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                alert(`Error fetching data: ${error.message}. Please try again later.`);
+            }
+        }
+
+       
+        locationForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const cityName = document.getElementById('cityName').value.trim();
+            if (cityName) {
+                fetchWeatherAndMap(cityName);
+                waveMap(cityName);
+            } else {
+                alert('Please enter a city name.');
+            }
+        });
+        function searchCity() {
+            const cityName = document.getElementById('cityInput').value;
+            if (cityName) {
+                fetchHourlyMarineWeather(cityName);
+                waveMap(cityName);
+            } else {
+                alert('Please enter a city name');
+            }
+        }
+      
+        function goBack1() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName');
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'HOURLY.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack10() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName'); 
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'weather dashboard.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack12() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName');
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'air.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack14() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName'); 
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'pastweather.html' + '?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack15() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'map.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack19() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'Daily.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+        function goBack144() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedCityName = urlParams.get('city');
+            const cityInput = document.getElementById('cityName'); // Ensure this matches your input field ID
+            const cityName = cityInput.value.trim() || (encodedCityName ? decodeURIComponent(encodedCityName) : '');
+            const url = 'major.html?city=' + encodeURIComponent(cityName);
+            window.location.href = url;
+        }
+    </script>
+</body>
+
+</html>
